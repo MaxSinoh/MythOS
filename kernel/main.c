@@ -37,20 +37,25 @@
 #include "../includes/gui/graphics.h"
 #include "../includes/gui/color.h"
 
-void KernelMain(const struct FrameBufferConfig *fbc) {
+void kernelMain(const struct FrameBufferConfig *fbc) {
     // Draw a darker light gray screen.
     for (int x = 0; x < fbc->horizontal_resolution; x++) {
         for (int y = 0; y < fbc->vertical_resolution; y++) {
-            WritePixel(fbc, x, y, yellow);
+            drawPixel(fbc, x, y, yellow);
         }
     }
     // Draw a shallow dark gray taskbar (the taskbar is 30 pixels high and located at the bottom of the screen)
     int taskbarHeight = 30; // Taskbar height in pixels
     for (int x = 0; x < fbc->horizontal_resolution; x++) {
         for (int y = fbc->vertical_resolution - taskbarHeight; y < fbc->vertical_resolution; y++) {
-            WritePixel(fbc, x, y, darkLightGray);
+            drawPixel(fbc, x, y, darkLightGray);
         }
     }
+
+    drawRect(fbc, 25, 25, 666, 333, black);
+
+    drawStr(fbc, "Terminal", 30, 30, black, yellow);
+    
     while (1) {
         __asm__("hlt");
     }

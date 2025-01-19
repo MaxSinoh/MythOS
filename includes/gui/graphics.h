@@ -44,6 +44,9 @@ typedef struct {
     uint8_t b;
 } PixelColor;
 
-int WritePixel(const struct FrameBufferConfig *config, int x, int y, PixelColor c);
+int drawPixel(const struct FrameBufferConfig *config, int x, int y, PixelColor c);
+void drawRect(const struct FrameBufferConfig *config, int x, int y, int w, int h, PixelColor color);
+void drawChar(const struct FrameBufferConfig *config, char c, int x, int y, PixelColor color, PixelColor back_color);
+void drawStr(const struct FrameBufferConfig *config, char *s, int x, int y, PixelColor color, PixelColor back_color);
 
 #endif

@@ -36,15 +36,15 @@
 #ifndef _UEFI_H_
 #define _UEFI_H_
 
-typedef unsigned char UINT8;
-typedef unsigned short UINT16;
-typedef unsigned int UINT32;
-typedef unsigned long long UINT64;
+typedef unsigned char       UINT8;
+typedef unsigned short      UINT16;
+typedef unsigned int        UINT32;
+typedef unsigned long long  UINT64;
 
-typedef UINT64 UINTN; 
-typedef UINTN EFI_STATUS;
-typedef void VOID;
-typedef UINT16 CHAR16;
+typedef UINT64  UINTN; 
+typedef UINTN   EFI_STATUS;
+typedef void    VOID;
+typedef UINT16  CHAR16;
 
 typedef UINTN EFI_PHYSICAL_ADDRESS;
 typedef UINTN EFI_VIRTUAL_ADDRESS;
@@ -52,12 +52,11 @@ typedef UINTN EFI_VIRTUAL_ADDRESS;
 typedef VOID *EFI_HANDLE;
 typedef VOID *EFI_EVENT;
 
-typedef unsigned char uint8_t;
-typedef unsigned short uint16_t;
-typedef unsigned int uint32_t;
-typedef unsigned long long uint64_t;
-
-typedef unsigned long int size_t; // compatible to ELF toolchain
+typedef unsigned char       uint8_t;
+typedef unsigned short      uint16_t;
+typedef unsigned int        uint32_t;
+typedef unsigned long long  uint64_t;
+typedef unsigned long int   size_t; // compatible to ELF toolchain
 
 #define EFI_ERROR_MASK 0x8000000000000000
 #define EFIERR(a) (EFI_ERROR_MASK | a)
@@ -106,11 +105,11 @@ enum PixelFormat {
 }; 
 
 struct FrameBufferConfig {
-    uint8_t *frame_buffer;
+    uint8_t  *frame_buffer;
     uint32_t pixels_per_scan_line;
     uint32_t horizontal_resolution;
     uint32_t vertical_resolution;
-    enum PixelFormat pixel_format;
+    enum     PixelFormat pixel_format;
 };
 
 typedef struct
@@ -187,22 +186,22 @@ enum EFI_ALLOCATE_TYPE {
     MaxAllocateType
 };
 
-#define EFI_MEMORY_UC 0x0000000000000001
-#define EFI_MEMORY_WC 0x0000000000000002
-#define EFI_MEMORY_WT 0x0000000000000004
-#define EFI_MEMORY_WB 0x0000000000000008
-#define EFI_MEMORY_UCE 0x0000000000000010
-#define EFI_MEMORY_WP 0x0000000000001000
-#define EFI_MEMORY_RP 0x0000000000002000
-#define EFI_MEMORY_XP 0x0000000000004000
-#define EFI_MEMORY_NV 0x0000000000008000
-#define EFI_MEMORY_MORE_RELIABLE 0x0000000000010000
-#define EFI_MEMORY_RO 0x0000000000020000
-#define EFI_MEMORY_SP 0x0000000000040000
-#define EFI_MEMORY_CPU_CRYPTO 0x0000000000080000
-#define EFI_MEMORY_RUNTIME 0x8000000000000000
-#define EFI_MEMORY_ISA_VALID 0x4000000000000000
-#define EFI_MEMORY_ISA_MASK 0x0FFFF00000000000
+#define EFI_MEMORY_UC               0x0000000000000001
+#define EFI_MEMORY_WC               0x0000000000000002
+#define EFI_MEMORY_WT               0x0000000000000004
+#define EFI_MEMORY_WB               0x0000000000000008
+#define EFI_MEMORY_UCE              0x0000000000000010
+#define EFI_MEMORY_WP               0x0000000000001000
+#define EFI_MEMORY_RP               0x0000000000002000
+#define EFI_MEMORY_XP               0x0000000000004000
+#define EFI_MEMORY_NV               0x0000000000008000
+#define EFI_MEMORY_MORE_RELIABLE    0x0000000000010000
+#define EFI_MEMORY_RO               0x0000000000020000
+#define EFI_MEMORY_SP               0x0000000000040000
+#define EFI_MEMORY_CPU_CRYPTO       0x0000000000080000
+#define EFI_MEMORY_RUNTIME          0x8000000000000000
+#define EFI_MEMORY_ISA_VALID        0x4000000000000000
+#define EFI_MEMORY_ISA_MASK         0x0FFFF00000000000
 
 #define FREE_MEMORY 1
 #define MMIO_MEMORY 2
@@ -216,11 +215,11 @@ struct OS_MEMORY_DESCRIPTOR {
 };
 
 struct EFI_MEMORY_DESCRIPTOR{
-    UINT32 Type;
-    EFI_PHYSICAL_ADDRESS PhysicalStart;
-    EFI_VIRTUAL_ADDRESS VirtualStart;
-    UINT64 NumberOfPages;
-    UINT64 Attribute;
+    UINT32                  Type;
+    EFI_PHYSICAL_ADDRESS    PhysicalStart;
+    EFI_VIRTUAL_ADDRESS     VirtualStart;
+    UINT64                  NumberOfPages;
+    UINT64                  Attribute;
 };
 
 struct EFI_BOOT_SERVICES {
@@ -231,33 +230,36 @@ struct EFI_BOOT_SERVICES {
 
     // Memory Services
     EFI_STATUS (*AllocatePages)(
-        enum EFI_ALLOCATE_TYPE Type,
-        enum EFI_MEMORY_TYPE MemoryType,
-        UINTN Pages,
-        EFI_PHYSICAL_ADDRESS *Memory);
+        enum EFI_ALLOCATE_TYPE  Type,
+        enum EFI_MEMORY_TYPE    MemoryType,
+        UINTN                   Pages,
+        EFI_PHYSICAL_ADDRESS    *Memory
+    );
     EFI_STATUS (*FreePages)(
-        EFI_PHYSICAL_ADDRESS Memory,
-        UINTN Pages);
+        EFI_PHYSICAL_ADDRESS    Memory,
+        UINTN                   Pages
+    );
     EFI_STATUS (*GetMemoryMap) (
-        UINTN *MemoryMapSize,
-        struct EFI_MEMORY_DESCRIPTOR *MemoryMap,
-        UINTN *MapKey,
-        UINTN *DescriptorSize,
-        UINT32 *DescriptorVersion
+        UINTN                           *MemoryMapSize,
+        struct EFI_MEMORY_DESCRIPTOR    *MemoryMap,
+        UINTN                           *MapKey,
+        UINTN                           *DescriptorSize,
+        UINT32                          *DescriptorVersion
     );
     EFI_STATUS (*AllocatePool)(
-            enum EFI_MEMORY_TYPE PoolType,
-            UINTN Size,
-            VOID **Buffer);
-    EFI_STATUS (*FreePool)(
-            VOID *Buffer);
+            enum EFI_MEMORY_TYPE    PoolType,
+            UINTN                   Size,
+            VOID                    **Buffer
+    );
+    EFI_STATUS (*FreePool)(VOID *Buffer);
 
     // Event & Timer Services
     UINTN _buf4[2];
     EFI_STATUS (*WaitForEvent)(
-        UINTN NumberOfEvents,
-        EFI_EVENT *Event,
-        UINTN *Index);
+        UINTN       NumberOfEvents,
+        EFI_EVENT   *Event,
+        UINTN       *Index
+    );
     UINTN _buf4_2[3];
 
     // Protocol Handler Services
@@ -269,22 +271,22 @@ struct EFI_BOOT_SERVICES {
     // Miscellaneous Services
     UINTN _buf7[2];
     EFI_STATUS (*SetWatchdogTimer)(
-        UINTN Timeout,
-        UINT64 WatchdogCode,
-        UINTN DataSize,
-        CHAR16 *WatchdogData);
+        UINTN   Timeout,
+        UINT64  WatchdogCode,
+        UINTN   DataSize,
+        CHAR16  *WatchdogData);
 
     // DriverSupport Services
     UINTN _buf8[2];
 
     // Open and Close Protocol Services
     EFI_STATUS (*OpenProtocol)(
-        EFI_HANDLE Handle,
-        struct EFI_GUID *Protocol,
-        VOID **Interface,
-        EFI_HANDLE AgentHandle,
-        EFI_HANDLE ControllerHandle,
-        UINT32 Attributes
+        EFI_HANDLE          Handle,
+        struct EFI_GUID     *Protocol,
+        VOID                **Interface,
+        EFI_HANDLE          AgentHandle,
+        EFI_HANDLE          ControllerHandle,
+        UINT32              Attributes
     );
     UINTN _buf9[2];
 
@@ -292,8 +294,9 @@ struct EFI_BOOT_SERVICES {
     UINTN _buf10[2];
     EFI_STATUS (*LocateProtocol)(
         struct EFI_GUID *Protocol,
-        VOID *Registration,
-        VOID **Interface);
+        VOID            *Registration,
+        VOID            **Interface
+    );
     UINTN _buf10_2[2];
 
     // 32-bit CRC Services
@@ -306,21 +309,24 @@ struct EFI_BOOT_SERVICES {
 struct EFI_SYSTEM_TABLE {
     char _buf1[44];
     struct EFI_SIMPLE_TEXT_INPUT_PROTOCOL {
-        UINTN Reset;
+        UINTN       Reset;
         EFI_STATUS (*ReadKeyStroke)(
-            struct EFI_SIMPLE_TEXT_INPUT_PROTOCOL *This,
-            struct EFI_INPUT_KEY *Key);
-        EFI_EVENT WaitForKey;
+            struct EFI_SIMPLE_TEXT_INPUT_PROTOCOL   *This,
+            struct EFI_INPUT_KEY                    *Key
+        );
+        EFI_EVENT   WaitForKey;
     } *ConIn;
     UINTN _buf2;
     struct EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL {
         UINTN _buf;
         EFI_STATUS (*OutputString)(
-            struct EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL *This,
-            CHAR16 *String);
+            struct EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL  *This,
+            CHAR16                                  *String
+        );
         UINTN _buf2[4];
         EFI_STATUS (*ClearScreen)(
-            struct EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL *This);
+            struct EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL *This
+        );
     } *ConOut;
     UINTN _buf3[3];
     struct EFI_BOOT_SERVICES *BootServices;
@@ -328,17 +334,23 @@ struct EFI_SYSTEM_TABLE {
 
 struct EFI_SIMPLE_POINTER_STATE
 {
-    int RelativeMovementX;
-    int RelativeMovementY;
-    int RelativeMovementZ;
-    char LeftButton;
-    char RightButton;
+    int     RelativeMovementX;
+    int     RelativeMovementY;
+    int     RelativeMovementZ;
+    char    LeftButton;
+    char    RightButton;
 };
 
 struct EFI_SIMPLE_POINTER_PROTOCOL 
 {
-    EFI_STATUS (*Reset)(struct EFI_SIMPLE_POINTER_PROTOCOL *This,unsigned char ExtendedVerification);
-    EFI_STATUS (*GetState)(struct EFI_SIMPLE_POINTER_PROTOCOL *This,struct EFI_SIMPLE_POINTER_STATE *State);
+    EFI_STATUS (*Reset)(
+        struct EFI_SIMPLE_POINTER_PROTOCOL  *This,
+        unsigned char                       ExtendedVerification
+    );
+    EFI_STATUS (*GetState)(
+        struct EFI_SIMPLE_POINTER_PROTOCOL  *This,
+        struct EFI_SIMPLE_POINTER_STATE     *State
+    );
     void *WaitForInput;
 };
 
@@ -360,44 +372,41 @@ enum EFI_GRAPHICS_PIXEL_FORMAT {
 struct EFI_GRAPHICS_OUTPUT_PROTOCOL {
     UINTN _buf[3];
     struct EFI_GRAPHICS_OUTPUT_PROTOCOL_MODE {
-        UINT32 MaxMode;
-        UINT32 Mode;
+        UINT32                  MaxMode;
+        UINT32                  Mode;
         struct EFI_GRAPHICS_OUTPUT_MODE_INFORMATION {
-            UINT32 Version;
-            UINT32 HorizontalResolution;
-            UINT32 VerticalResolution;
-            enum EFI_GRAPHICS_PIXEL_FORMAT PixelFormat;
-            UINT32 PixelInformation[4];
-            UINT32 PixelsPerScanLine;
+            UINT32                          Version;
+            UINT32                          HorizontalResolution;
+            UINT32                          VerticalResolution;
+            enum EFI_GRAPHICS_PIXEL_FORMAT  PixelFormat;
+            UINT32                          PixelInformation[4];
+            UINT32                          PixelsPerScanLine;
         } *Info;
-        UINTN SizeOfInfo;
-        EFI_PHYSICAL_ADDRESS FrameBufferBase;
-        UINTN FrameBufferSize;
+        UINTN                   SizeOfInfo;
+        EFI_PHYSICAL_ADDRESS    FrameBufferBase;
+        UINTN                   FrameBufferSize;
     } *Mode;
 };
 
 struct EFI_LOADED_IMAGE_PROTOCOL {
-    UINT32 Revision;
-    EFI_HANDLE ParentHandle;
-    struct EFI_SYSTEM_TABLE *SystemTable;
-
-    EFI_HANDLE DeviceHandle;
-    VOID *FilePath; 
-    VOID *Reserved;
-
-    UINT32 LoadOptionsSize;
-    VOID *LoadOptions;
-
-    VOID *ImageBase;
-    UINT64 ImageSize;
-    enum EFI_MEMORY_TYPE ImageCodeType;
-    enum EFI_MEMORY_TYPE ImageDataType; 
+    UINT32                      Revision;
+    EFI_HANDLE                  ParentHandle;
+    struct EFI_SYSTEM_TABLE     *SystemTable;
+    EFI_HANDLE                  DeviceHandle;
+    VOID                        *FilePath; 
+    VOID                        *Reserved;
+    UINT32                      LoadOptionsSize;
+    VOID                        *LoadOptions;
+    VOID                        *ImageBase;
+    UINT64                      ImageSize;
+    enum EFI_MEMORY_TYPE        ImageCodeType;
+    enum EFI_MEMORY_TYPE        ImageDataType; 
     EFI_STATUS (*Unload)(EFI_HANDLE ImageHandle);
 }; // LIP
 
 struct EFI_FILE_INFO {
-    unsigned char _buf[80];
-    CHAR16 FileName[]; 
+    unsigned char   _buf[80];
+    CHAR16          FileName[]; 
 };
 
 #define EFI_FILE_MODE_READ      0x0000000000000001
@@ -408,30 +417,147 @@ struct EFI_FILE_PROTOCOL {
     UINTN Revision;
     EFI_STATUS (*Open)(struct EFI_FILE_PROTOCOL *This,
                    struct EFI_FILE_PROTOCOL **NewHandle,
-                   CHAR16 *FileName,
-                   UINT64 OpenMode,
-                   UINT64 Attributes);
+                   CHAR16                   *FileName,
+                   UINT64                   OpenMode,
+                   UINT64                   Attributes
+    );
     EFI_STATUS (*Close)(struct EFI_FILE_PROTOCOL *This);
     UINTN _buf2;
     EFI_STATUS (*Read)(struct EFI_FILE_PROTOCOL *This,
-                   UINTN *BufferSize,
-                   VOID *Buffer);
+                   UINTN    *BufferSize,
+                   VOID     *Buffer
+    );
     EFI_STATUS (*Write)(struct EFI_FILE_PROTOCOL *This,
-                    UINTN *BufferSize,
-                    VOID *Buffer);
+                    UINTN   *BufferSize,
+                    VOID    *Buffer
+    );
     UINTN _buf3[4];
     EFI_STATUS (*Flush)(struct EFI_FILE_PROTOCOL *This);
 }; // EFI_FILE_PROTOCOL
 
 struct EFI_SIMPLE_FILE_SYSTEM_PROTOCOL {
     UINT64 Revision;
-    EFI_STATUS (*OpenVolume)(struct EFI_SIMPLE_FILE_SYSTEM_PROTOCOL *This, struct EFI_FILE_PROTOCOL **Root);
+    EFI_STATUS (*OpenVolume)(
+        struct EFI_SIMPLE_FILE_SYSTEM_PROTOCOL  *This,
+        struct EFI_FILE_PROTOCOL                **Root
+    );
 }; // SFSP
 
-extern struct EFI_SYSTEM_TABLE *ST;
-extern struct EFI_GRAPHICS_OUTPUT_PROTOCOL *GOP;
-extern struct EFI_LOADED_IMAGE_PROTOCOL *LIP;
-extern struct EFI_SIMPLE_FILE_SYSTEM_PROTOCOL *SFSP;
-extern struct EFI_BOOT_SERVICES *BS;
+#define EFI_FONT_INFO_SYS_FONT          0x00000001
+#define EFI_FONT_INFO_SYS_SIZE          0x00000002
+#define EFI_FONT_INFO_SYS_STYLE         0x00000004
+#define EFI_FONT_INFO_SYS_FORE_COLOR    0x00000010
+#define EFI_FONT_INFO_SYS_BACK_COLOR    0x00000020
+#define EFI_FONT_INFO_RESIZE            0x00001000
+#define EFI_FONT_INFO_RESTYLE           0x00002000
+#define EFI_FONT_INFO_ANY_FONT          0x00010000
+#define EFI_FONT_INFO_ANY_SIZE          0x00020000
+#define EFI_FONT_INFO_ANY_STYLE         0x00040000
+
+#define EFI_HII_OUT_FLAG_CLIP           0x00000001
+#define EFI_HII_OUT_FLAG_WRAP           0x00000002
+#define EFI_HII_OUT_FLAG_CLIP_CLEAN_Y   0x00000004
+#define EFI_HII_OUT_FLAG_CLIP_CLEAN_X   0x00000008
+#define EFI_HII_OUT_FLAG_TRANSPARENT    0x00000010
+#define EFI_HII_IGNORE_IF_NO_GLYPH      0x00000020
+#define EFI_HII_IGNORE_LINE_BREAK       0x00000040
+#define EFI_HII_DIRECT_TO_SCREEN        0x00000080
+
+#define EFI_HII_FONT_STYLE_NORMAL       0x00000000
+#define EFI_HII_FONT_STYLE_BOLD         0x00000001
+#define EFI_HII_FONT_STYLE_ITALIC       0x00000002
+#define EFI_HII_FONT_STYLE_EMBOSS       0x00010000
+#define EFI_HII_FONT_STYLE_OUTLINE      0x00020000
+#define EFI_HII_FONT_STYLE_SHADOW       0x00040000
+#define EFI_HII_FONT_STYLE_UNDERLINE    0x00080000
+#define EFI_HII_FONT_STYLE_DBL_UNDER    0x00100000
+
+struct EFI_FONT_INFO {
+    UINT32 FontStyle;
+    UINT16 FontSize;
+    CHAR16 FontName[1];
+};
+
+struct EFI_FONT_DISPLAY_INFO {
+    struct EFI_GRAPHICS_OUTPUT_BLT_PIXEL   ForegroundColor;
+    struct EFI_GRAPHICS_OUTPUT_BLT_PIXEL   BackgroundColor;
+    UINT32                                 FontInfoMask;
+    struct EFI_FONT_INFO                   FontInfo;
+};
+
+struct EFI_HII_ROW_INFO {
+    UINTN StartIndex;
+    UINTN EndIndex;
+    UINTN LineHeight;
+    UINTN LineWidth;
+    UINTN BaselineOffset;
+};
+
+struct EFI_HII_GLYPH_INFO {
+    UINT16    Width;
+    UINT16    Height;
+    short     OffsetX;
+    short     OffsetY;
+    short     AdvanceX;
+};
+
+struct EFI_IMAGE_OUTPUT {
+    UINT16 Width;
+    UINT16 Height;
+    union {
+        struct EFI_GRAPHICS_OUTPUT_BLT_PIXEL   *Bitmap;
+        struct EFI_GRAPHICS_OUTPUT_PROTOCOL    *Screen;
+    } Image;
+};
+
+struct EFI_HII_FONT_PROTOCOL {
+    EFI_STATUS (*StringToImage)(
+        struct EFI_HII_FONT_PROTOCOL        *This,
+        UINT32                              Flags,
+        CHAR16                              *String,
+        struct EFI_FONT_DISPLAY_INFO        *StringInfo,
+        struct EFI_IMAGE_OUTPUT             **Blt,
+        UINTN                               BltX,
+        UINTN                               BltY,
+        struct EFI_HII_ROW_INFO             **RowInfoArray,
+        UINTN                               *RowInfoArraySize,
+        UINTN                               *ColumnInfoArray
+    );
+    EFI_STATUS (*StringIdToImage)(
+        struct EFI_HII_FONT_PROTOCOL        *This,
+        UINT32                              Flags,
+        VOID                                *PackageList,
+        UINT16                              StringId,
+        char                                *Language,
+        struct EFI_FONT_DISPLAY_INFO        *StringInfo,
+        struct EFI_IMAGE_OUTPUT             **Blt,
+        UINTN                               BltX,
+        UINTN                               BltY,
+        struct EFI_HII_ROW_INFO             **RowInfoArray,
+        UINTN                               *RowInfoArraySize,
+        UINTN                               *ColumnInfoArray
+
+    );
+    EFI_STATUS (*GetGlyph)(
+        struct EFI_HII_FONT_PROTOCOL *This,
+        CHAR16 Char,
+        struct EFI_FONT_DISPLAY_INFO *StringInfo,
+        struct EFI_IMAGE_OUTPUT **Blt,
+        UINTN *Baseline
+    );
+    EFI_STATUS (*GetFontInfo)(
+        struct EFI_HII_FONT_PROTOCOL    *This,
+        VOID                            *FontHandle,
+        struct EFI_FONT_DISPLAY_INFO    *StringInfoIn,
+        struct EFI_FONT_DISPLAY_INFO    **StringInfoOut,
+        CHAR16                          *String
+    );
+};
+
+extern struct EFI_SYSTEM_TABLE                  *ST;
+extern struct EFI_GRAPHICS_OUTPUT_PROTOCOL      *GOP;
+extern struct EFI_LOADED_IMAGE_PROTOCOL         *LIP;
+extern struct EFI_SIMPLE_FILE_SYSTEM_PROTOCOL   *SFSP;
+extern struct EFI_BOOT_SERVICES                 *BS;
 
 #endif 
