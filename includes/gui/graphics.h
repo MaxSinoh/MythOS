@@ -46,7 +46,9 @@ typedef struct {
 
 int drawPixel(const struct FrameBufferConfig *config, int x, int y, PixelColor c);
 void drawRect(const struct FrameBufferConfig *config, int x, int y, int w, int h, PixelColor color);
+int drawLine(const struct FrameBufferConfig *config, int x1, int y1, int x2, int y2, PixelColor color);
 void drawChar(const struct FrameBufferConfig *config, char c, int x, int y, PixelColor color, PixelColor back_color);
 void drawStr(const struct FrameBufferConfig *config, char *s, int x, int y, PixelColor color, PixelColor back_color);
+void clearScreen(const struct FrameBufferConfig *config);
 
 #endif

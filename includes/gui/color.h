@@ -38,14 +38,35 @@
 
 #include "graphics.h"
 
-PixelColor darkLightGray = {192, 192, 192}; // A darker light gray.
-PixelColor lightDarkGray = {128, 128, 128}; // A light dark gray.
-PixelColor black = {0, 0, 0};               // Black.
-PixelColor white = {255, 255, 255};         // White.
-PixelColor red = {255, 0, 0};               // Red.
-PixelColor green = {0, 255, 0};             // Green.
-PixelColor blue = {0, 0, 255};              // Blue.
-PixelColor yellow = {255, 255, 0};          // Yellow.
-PixelColor cyan = {0, 255, 255};            // Cyan.
+extern PixelColor black;
+extern PixelColor white;
+extern PixelColor red;
+extern PixelColor green;
+extern PixelColor blue;
+extern PixelColor yellow;
+extern PixelColor cyan;
+extern PixelColor magenta;
+extern PixelColor orange;
+extern PixelColor pink;
+extern PixelColor purple;
+extern PixelColor brown;
+extern PixelColor gold;
+extern PixelColor silver;
+extern PixelColor gray;
+extern PixelColor maroon;
+extern PixelColor olive;
+extern PixelColor teal;
+extern PixelColor navy;
+extern PixelColor tan;
+extern PixelColor indigo;
+extern PixelColor violet;
+extern PixelColor khaki;
+extern PixelColor wheat;
+extern PixelColor burlywood;
+extern PixelColor salmon;
+extern PixelColor lightSalmon;
+extern PixelColor coral;
+extern PixelColor tomato;
+extern PixelColor fireBrick;
 
 #endif
