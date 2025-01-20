@@ -1,2 +1,2 @@
 # MythOS kernel
-The kernel of MythOS.
+MythOS内核

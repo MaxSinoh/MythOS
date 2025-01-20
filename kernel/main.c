@@ -37,26 +37,21 @@
 #include "../includes/gui/graphics.h"
 #include "../includes/gui/color.h"
 
-void kernelMain(const struct FrameBufferConfig *fbc) {
-    // Draw a darker light gray screen.
-    for (int x = 0; x < fbc->horizontal_resolution; x++) {
-        for (int y = 0; y < fbc->vertical_resolution; y++) {
+void kernelMain(const struct FrameBufferConfig *fbc, BOOT_CONFIG *BootConfig) {
+    clearScreen(fbc);
+    drawStr(fbc, "Welcome to use MythOS!", 30, 30, black, white);
+    drawStr(fbc, "Copyright (c) 2025 MaxSinoh", 30, 50, black, white);
+    drawStr(fbc, "Open source address: https://github.com/MaxSinoh/MythOS/", 30, 70, black, white);
+    for (int x = 100; x < 200; x++) {
+        for (int y = 100; y < 200; y++) {
             drawPixel(fbc, x, y, yellow);
         }
     }
-    // Draw a shallow dark gray taskbar (the taskbar is 30 pixels high and located at the bottom of the screen)
-    int taskbarHeight = 30; // Taskbar height in pixels
-    for (int x = 0; x < fbc->horizontal_resolution; x++) {
-        for (int y = fbc->vertical_resolution - taskbarHeight; y < fbc->vertical_resolution; y++) {
-            drawPixel(fbc, x, y, darkLightGray);
-        }
-    }
-
-    drawRect(fbc, 25, 25, 666, 333, black);
-
-    drawStr(fbc, "Terminal", 30, 30, black, yellow);
+    drawRect(fbc, 100, 100, 100, 100, black);
+    drawRect(fbc, 111, 111, 78, 78, black);
+    drawLine(fbc, 150, 111, 150, 170, black);
+    drawLine(fbc, 130, 130, 130, 188, black);
+    drawLine(fbc, 170, 130, 170, 188, black);
     
-    while (1) {
-        __asm__("hlt");
-    }
+    while (1);
 }
