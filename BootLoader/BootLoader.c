@@ -167,6 +167,29 @@ void efi_init(EFI_HANDLE ImageHandle, struct EFI_SYSTEM_TABLE *SystemTable)
     BS->OpenProtocol(LIP->DeviceHandle, &sfsp_guid, (void **) &SFSP, ImageHandle, NULL, EFI_OPEN_PROTOCOL_BY_HANDLE_PROTOCOL);
 }
 
+EFI_STATUS GetMMP(MEMORY_MAP *MemoryMap) {
+    EFI_STATUS GetMemoryMapStatus = EFI_SUCCESS;
+    MemoryMap->Buffer = malloc(MemoryMap->MapSize);
+    while(  BS->GetMemoryMap(
+                &MemoryMap->MapSize,
+                (EFI_MEMORY_DESCRIPTOR *)MemoryMap->Buffer,
+                &MemoryMap->MapKey,
+                &MemoryMap->DescriptorSize,
+                &MemoryMap->DescriptorVersion
+            ) == EFI_BUFFER_TOO_SMALL) 
+    {
+        if (MemoryMap->Buffer) {
+            free(MemoryMap->Buffer);
+            MemoryMap->Buffer = NULL;
+        }
+        MemoryMap->Buffer = malloc(MemoryMap->MapSize);
+    }
+    if (!MemoryMap->Buffer) {
+        GetMemoryMapStatus = EFI_OUT_OF_RESOURCES;
+    }
+    return GetMemoryMapStatus;
+}
+
 EFI_STATUS entryPoint(EFI_HANDLE ImageHandle, struct EFI_SYSTEM_TABLE *SystemTable)
 {
     efi_init(ImageHandle, SystemTable);
@@ -189,25 +212,25 @@ EFI_STATUS entryPoint(EFI_HANDLE ImageHandle, struct EFI_SYSTEM_TABLE *SystemTab
         puts(L"FAILED: error while opening kernel file");
         while (1);
     }
-    status = kernel_file->Read(kernel_file, &kernel_size, kernel_buffer); // 读取内核，直接读到kernel_buffer
+    status = kernel_file->Read(kernel_file, &kernel_size, kernel_buffer);
     if (EFI_ERROR(status)) {
         puts(L"FAILED: error while reading kernel file");
         while (1);
     }
 
     Elf64_Ehdr *ehdr = (Elf64_Ehdr *) kernel_buffer;
-    UINT64 kernel_first_addr, kernel_last_addr; // 计算的首尾
-    CalcLoadAddressRange(ehdr, &kernel_first_addr, &kernel_last_addr); // 计算范围
+    UINT64 kernel_first_addr, kernel_last_addr;
+    CalcLoadAddressRange(ehdr, &kernel_first_addr, &kernel_last_addr);
 
-    status = mallocAt(kernel_first_addr, kernel_last_addr - kernel_first_addr); // 分配内存
+    status = mallocAt(kernel_first_addr, kernel_last_addr - kernel_first_addr);
     if (EFI_ERROR(status)) {
         puts(L"FAILED: error while allocating buffer for kernel");
         while (1);
     }
 
-    CopyLoadSegments(ehdr); // 复制PT_LOAD
-    entry_addr = ehdr->e_entry; // 获取入口点
-    free(kernel_buffer); // 释放内核文件
+    CopyLoadSegments(ehdr);
+    entry_addr = ehdr->e_entry;
+    free(kernel_buffer);
 
     struct FrameBufferConfig config = {
         (UINT8 *) GOP->Mode->FrameBufferBase,
@@ -229,8 +252,17 @@ EFI_STATUS entryPoint(EFI_HANDLE ImageHandle, struct EFI_SYSTEM_TABLE *SystemTab
             while (1);
     }
 
+    BOOT_CONFIG BootConfig;
+    BootConfig.MemoryMap.MapSize = 4096;
+    BootConfig.MemoryMap.Buffer = NULL;
+    BootConfig.MemoryMap.MapKey = 0;
+    BootConfig.MemoryMap.DescriptorSize = 0;
+    BootConfig.MemoryMap.DescriptorVersion = 0;
+
+    GetMMP(&BootConfig.MemoryMap);
+
     typedef void (* __attribute__((sysv_abi)) Kernel)(const struct FrameBufferConfig *);
     Kernel kernel = (Kernel) entry_addr;
-    kernel(&config); // jump to kernel!
+    kernel(&config); // Jump into kernel!
     while (1);
 }
