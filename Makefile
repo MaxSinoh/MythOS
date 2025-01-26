@@ -72,7 +72,7 @@ ESP = .\esp
 ESP_BOOTLOADER = $(ESP)\EFI\BOOT\BOOTX64.EFI
 ESP_KERNEL = $(ESP)\kernel.elf
 
-all: info clean objects efi link done
+all: info clean objects efi link done qemu
 
 clean:
 	@echo Cleaning...
@@ -136,6 +136,8 @@ done:
 	@echo All done.
 
 run: all
+
+qemu:
 	@echo Copying BootLoader and kernel...
 	@copy .\bin\BootLoader.efi .\esp\EFI\BOOT\bootx64.efi
 	@copy .\bin\kernel.elf .\esp\kernel.elf
