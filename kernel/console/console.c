@@ -86,7 +86,6 @@ void putString(Console *console, const char *s) {
     }
 }
 
-
 /**
  * 在控制台上换行
  * @param console 控制台对象指针

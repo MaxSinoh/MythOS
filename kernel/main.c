@@ -41,7 +41,7 @@
 #include <string/string.h>
 #include <view/bmp.h>
 #include <std/stdarg.h>
-#include <logo.h>
+#include <image/logo.h>
 
 Console *console;
 int printk(const char *fmt, ...)
@@ -55,6 +55,7 @@ int printk(const char *fmt, ...)
     putString(console, buf); // 输出到控制台
     return result; // 返回结果
 }
+
 /**
  * @brief 主函数，用于在帧缓冲区上绘制图形和文本
  * 该函数接收一个帧缓冲区配置指针和一个引导配置指针，并在帧缓冲区上绘制一系列图形和文本。
@@ -64,14 +65,14 @@ int printk(const char *fmt, ...)
 void kernelMain(const struct FrameBufferConfig *fbc, BOOT_CONFIG *BootConfig)
 {
     clearScreen(fbc);
-
     console->config = fbc;
-    console->fg_color = black;
-    console->bg_color = white;
+    console->fg_color = white;
+    console->bg_color = black;
     memset(console->buffer, 0, sizeof(console->buffer));
     console->cursor_row = 0;
     console->cursor_column = 0;
     printk("Welcome to MythOS!\n");
+    printk("Copyright (C) 2025 Wisdom Soft\n");
     drawBMP(fbc, (BMP_IMAGE_HEADER *)logo, fbc->horizontal_resolution - 128 - 20, fbc->vertical_resolution - 128 -10, 0);
     while (1);
 }
