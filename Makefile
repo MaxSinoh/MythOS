@@ -67,6 +67,8 @@ STDLIB = .\kernel\std\stdlib.c
 STDLIB_O = .\kernel\std\stdlib.o
 STDIO = .\kernel\std\stdio.c
 STDIO_O = .\kernel\std\stdio.o
+IO = .\kernel\hal\io.c
+IO_O = .\kernel\hal\io.o
 
 ESP = .\esp
 ESP_BOOTLOADER = $(ESP)\EFI\BOOT\BOOTX64.EFI
@@ -87,6 +89,7 @@ clean:
 	@del $(STRING_O)
 	@del $(STDLIB_O)
 	@del $(STDIO_O)
+	@del $(IO_O)
 	@echo Cleaned.
 
 info:
@@ -126,10 +129,13 @@ objects:
 	@echo Compiling stdio...
 	@$(ELF_GCC) $(STDIO) $(ELF_GCC_FLAGS) $(STDIO_O)
 	@echo Done.
+	@echo Compiling io...
+	@$(ELF_GCC) $(IO) $(ELF_GCC_FLAGS) $(IO_O)
+	@echo Done.
 
 link:
 	@echo Linking...
-	@$(LD) $(LD_FLAGS) $(KERNEL_ELF) $(KERNEL_O) $(GRAPHICS_O) $(FONT_O) $(COLOR_O) $(BMP_O) $(CONSOLE_O) $(STRING_O) $(STDLIB_O) $(STDIO_O)
+	@$(LD) $(LD_FLAGS) $(KERNEL_ELF) $(KERNEL_O) $(GRAPHICS_O) $(FONT_O) $(COLOR_O) $(BMP_O) $(CONSOLE_O) $(STRING_O) $(STDLIB_O) $(STDIO_O) $(IO_O)
 	@echo Done.
 
 done:

@@ -42,6 +42,7 @@
 #include <view/bmp.h>
 #include <std/stdarg.h>
 #include <image/logo.h>
+#include <hal/io.h>
 
 Console *console;
 int printk(const char *fmt, ...)
@@ -66,13 +67,13 @@ void kernelMain(const struct FrameBufferConfig *fbc, BOOT_CONFIG *BootConfig)
 {
     clearScreen(fbc);
     console->config = fbc;
-    console->fg_color = white;
-    console->bg_color = black;
+    console->fg_color = black;
+    console->bg_color = white;
     memset(console->buffer, 0, sizeof(console->buffer));
     console->cursor_row = 0;
     console->cursor_column = 0;
-    printk("Welcome to MythOS!\n");
-    printk("Copyright (C) 2025 Wisdom Soft\n");
-    drawBMP(fbc, (BMP_IMAGE_HEADER *)logo, fbc->horizontal_resolution - 128 - 20, fbc->vertical_resolution - 128 -10, 0);
-    while (1);
+    printk("Welcome to MythOS\n");
+    printk("Copyright (C) 2025 MaxSinoh & LuoYuDian");
+    drawBMP((struct FrameBufferConfig *)fbc, (BMP_IMAGE_HEADER *)logo, fbc->horizontal_resolution - 128 - 20, fbc->vertical_resolution - 128 -10, 0);
+    while (1) halt();
 }
