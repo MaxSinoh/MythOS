@@ -60,8 +60,8 @@ void kernelMain(const struct FrameBufferConfig *fbc, BOOT_CONFIG *BootConfig)
     clearScreen(fbc);       // 清除屏幕
 
     console->config = fbc;       // 设置控制台帧缓冲区配置
-    console->fg_color = black;   // 设置控制台前景色为黑色
-    console->bg_color = white;   // 设置控制台背景色为白色
+    console->fg_color = gold;    // 设置控制台前景色为金色
+    console->bg_color = red;     // 设置控制台背景色为红色
     memset(                      // 将控制台缓冲区内存清零
         console->buffer, 0,
         sizeof(console->buffer)
@@ -83,8 +83,8 @@ void kernelMain(const struct FrameBufferConfig *fbc, BOOT_CONFIG *BootConfig)
     );
     initgdt();                   // 初始化全局描述符表
     
-    printk("Welcome to MythOS\n");                      // 打印欢迎信息
-    printk("Copyright (C) 2025 MaxSinoh & LuoYuDian");  // 打印版权信息
+    printk("  Welcome to MythOS\n");                      // 打印欢迎信息
+    printk("  Copyright (C) 2025 MaxSinoh & LuoYuDian");  // 打印版权信息
     
     halt();                      // 停止执行
 }
