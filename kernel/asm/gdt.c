@@ -69,7 +69,7 @@ void GDTInstall(int64_t num,uint64_t base,uint64_t limit,uint8_t access,uint8_t 
  *
  * 此函数用于初始化全局描述符表（GDT），设置各个描述符以支持操作系统运行。
  *
- * 首先，设置 GDT 表的界限（limit）和基地址（base）。然后，调用 GDTsetGate 函数
+ * 首先，设置 GDT 表的界限（limit）和基地址（base）。然后，调用 GDInstall 函数
  * 设置不同的描述符，包括空描述符、代码段描述符、数据段描述符、用户模式代码段描述符
  * 和用户模式数据段描述符。
  *
@@ -80,11 +80,11 @@ void initgdt(void)
 {
 	GDTPtr.limit= sizeof(GDT_entry_t) * GDT_LENGTH - 1; // GDT 表的大小 - 1
 	GDTPtr.base	= (uint64_t)&GDTentries;	            // 指向 GDT 表的首地址
-	GDTsetGate(0, 0, 0,          0,    0);              // 空描述符，用于特权级别转换时使用
-	GDTsetGate(1, 0, 0xFFFFFFFF, 0x9B, 0xA0);	        // 代码段
-	GDTsetGate(2, 0, 0xFFFFFFFF, 0x93, 0xA0);	        // 数据段
-	GDTsetGate(3, 0, 0xFFFFFFFF, 0xFB, 0xA0);	        // 用户模式代码段
-	GDTsetGate(4, 0, 0xFFFFFFFF, 0xF3, 0xA0);	        // 用户模式数据段
+	GDTInstall(0, 0, 0,          0,    0);              // 空描述符，用于特权级别转换时使用
+	GDTInstall(1, 0, 0xFFFFFFFF, 0x9B, 0xA0);	        // 代码段
+	GDTInstall(2, 0, 0xFFFFFFFF, 0x93, 0xA0);	        // 数据段
+	GDTInstall(3, 0, 0xFFFFFFFF, 0xFB, 0xA0);	        // 用户模式代码段
+	GDTInstall(4, 0, 0xFFFFFFFF, 0xF3, 0xA0);	        // 用户模式数据段
 
 	__asm__ volatile                    // 使用汇编语言加载 GDT 寄存器并设置数据段选择子
 	(
