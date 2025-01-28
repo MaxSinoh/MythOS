@@ -54,7 +54,7 @@ typedef struct GDT_ptr_t
 	uint64_t base;
 } __attribute__((packed)) GDT_ptr_t;
 
-static void GDTsetGate(int64_t num,uint64_t base,uint64_t limit,uint8_t access,uint8_t gran);
+void GDTInstall(int64_t num,uint64_t base,uint64_t limit,uint8_t access,uint8_t gran);
 void initgdt(void);
 
 #endif

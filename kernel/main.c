@@ -75,6 +75,12 @@ void kernelMain(const struct FrameBufferConfig *fbc, BOOT_CONFIG *BootConfig)
         fbc->horizontal_resolution - 128 - 20,
         fbc->vertical_resolution - 128 -10, 0
     );
+    drawBMP(                     // 绘制新春特别版图片到帧缓冲区
+        (struct FrameBufferConfig *)fbc,
+        (BMP_IMAGE_HEADER *)MythOS_SpringFestivalSpecialVersion,
+        fbc->horizontal_resolution - 192 - 20,
+        fbc->vertical_resolution - 125 - 10 - 128, 1
+    );
     initgdt();                   // 初始化全局描述符表
     
     printk("Welcome to MythOS\n");                      // 打印欢迎信息

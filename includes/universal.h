@@ -45,6 +45,7 @@
 #include <view/bmp.h>
 #include <std/stdarg.h>
 #include <image/logo.h>
+#include <image/MythOS_SpringFestivalSpecialVersion.h>
 #include <hal/io.h>
 #include <asm/gdt.h>
 

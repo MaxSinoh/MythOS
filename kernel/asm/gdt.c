@@ -52,7 +52,7 @@ GDT_ptr_t GDTPtr;
  * @param access 描述符的访问权限
  * @param gran 描述符的粒度
  */
-static void GDTsetGate(int64_t num,uint64_t base,uint64_t limit,uint8_t access,uint8_t gran)
+void GDTInstall(int64_t num,uint64_t base,uint64_t limit,uint8_t access,uint8_t gran)
 {
     GDTentries[num].base_low		= (base & 0xFFFF);          // 基地址的低16位
 	GDTentries[num].base_middle	    = (base >> 16) & 0xFF;      // 基地址的中8位
