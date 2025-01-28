@@ -86,5 +86,5 @@ void kernelMain(const struct FrameBufferConfig *fbc, BOOT_CONFIG *BootConfig)
     printk("Welcome to MythOS\n");                      // 打印欢迎信息
     printk("Copyright (C) 2025 MaxSinoh & LuoYuDian");  // 打印版权信息
     
-    halt();
+    halt();                      // 停止执行
 }
