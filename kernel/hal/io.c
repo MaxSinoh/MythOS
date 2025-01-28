@@ -222,7 +222,7 @@ void outsl(uint32_t port,const void *addr,int cnt)
  *
  * @return 无返回值
  */
-void enable_interrupts(void)
+void enableInterrupts(void)
 {
 	// 启用中断
 	__asm__ volatile("sti"); // 使用汇编指令sti启用中断
@@ -237,7 +237,7 @@ void enable_interrupts(void)
  *
  * @warning 调用此函数后，必须确保在适当的时候重新启用中断，以避免造成系统挂起或崩溃。
  */
-void disable_interrupts(void)
+void disableInterrupts(void)
 {
     // 禁用中断
 	__asm__ volatile("cli" ::: "memory");
@@ -252,7 +252,7 @@ void disable_interrupts(void)
 void halt(void)
 {
 	// 禁用中断
-	disable_interrupts();
+	disableInterrupts();
 	// 进入一个无限循环
 	while(1) 
 	{

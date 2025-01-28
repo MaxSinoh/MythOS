@@ -55,8 +55,10 @@ typedef VOID *EFI_EVENT;
 typedef unsigned char       uint8_t;
 typedef unsigned short      uint16_t;
 typedef unsigned int        uint32_t;
-// typedef unsigned long long  uint64_t;
+typedef unsigned long long  uint64_t;
 typedef unsigned long int   size_t; // compatible to ELF toolchain
+
+typedef long long           int64_t;
 
 #define EFI_ERROR_MASK 0x8000000000000000
 #define EFIERR(a) (EFI_ERROR_MASK | a)

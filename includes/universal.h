@@ -29,32 +29,23 @@
 //
 //      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-//                MYTHOS IO HEADER FILE
+//             MYTHOS UNIVERSAL HEADER FILE
 //
 //      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-#ifndef _IO_H_
-#define _IO_H_
+#ifndef _UNIVERSAL_H_
+#define _UNIVERSAL_H_
 
 #include <firmware/uefi.h>
-
-void outb(uint16_t port,uint8_t value);
-uint8_t inb(uint16_t port);
-
-void outw(uint16_t port,uint16_t value);
-uint16_t inw(uint16_t port);
-
-void outl(uint16_t port,uint32_t value);
-uint32_t inl(uint16_t port);
-
-void insw(uint16_t port,void *buf,unsigned long n);
-void outsw(uint16_t port,const void *buf,unsigned long n);
-
-void insl(uint32_t port,void *addr,int cnt);
-void outsl(uint32_t port,const void *addr,int cnt);
-
-void enableInterrupts(void);
-void disableInterrupts(void);
-void halt(void);
+#include <gui/graphics.h>
+#include <gui/color.h>
+#include <console/console.h>
+#include <std/stdio.h>
+#include <string/string.h>
+#include <view/bmp.h>
+#include <std/stdarg.h>
+#include <image/logo.h>
+#include <hal/io.h>
+#include <asm/gdt.h>
 
 #endif

@@ -69,6 +69,8 @@ STDIO = .\kernel\std\stdio.c
 STDIO_O = .\kernel\std\stdio.o
 IO = .\kernel\hal\io.c
 IO_O = .\kernel\hal\io.o
+GDT = .\kernel\asm\gdt.c
+GDT_O = .\kernel\asm\gdt.o
 
 ESP = .\esp
 ESP_BOOTLOADER = $(ESP)\EFI\BOOT\BOOTX64.EFI
@@ -90,6 +92,7 @@ clean:
 	@del $(STDLIB_O)
 	@del $(STDIO_O)
 	@del $(IO_O)
+	@del $(GDT_O)
 	@echo Cleaned.
 
 info:
@@ -132,10 +135,14 @@ objects:
 	@echo Compiling io...
 	@$(ELF_GCC) $(IO) $(ELF_GCC_FLAGS) $(IO_O)
 	@echo Done.
+	@echo Compiling gdt...
+	@$(ELF_GCC) $(GDT) $(ELF_GCC_FLAGS) $(GDT_O)
+	@echo Done.
 
 link:
 	@echo Linking...
-	@$(LD) $(LD_FLAGS) $(KERNEL_ELF) $(KERNEL_O) $(GRAPHICS_O) $(FONT_O) $(COLOR_O) $(BMP_O) $(CONSOLE_O) $(STRING_O) $(STDLIB_O) $(STDIO_O) $(IO_O)
+	@$(LD) $(LD_FLAGS) $(KERNEL_ELF) $(KERNEL_O) $(GRAPHICS_O) $(FONT_O) $(COLOR_O)\
+		$(BMP_O) $(CONSOLE_O) $(STRING_O) $(STDLIB_O) $(STDIO_O) $(IO_O) $(GDT_O)
 	@echo Done.
 
 done:
