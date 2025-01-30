@@ -71,6 +71,8 @@ IO = .\kernel\asm\hal\io.c
 IO_O = .\kernel\asm\hal\io.o
 GDT = .\kernel\asm\gdt\gdt.c
 GDT_O = .\kernel\asm\gdt\gdt.o
+IDT = .\kernel\asm\idt\idt.c
+IDT_O = .\kernel\asm\idt\idt.o
 
 ESP = .\esp
 ESP_BOOTLOADER = $(ESP)\EFI\BOOT\BOOTX64.EFI
@@ -93,6 +95,7 @@ clean:
 	@del $(STDIO_O)
 	@del $(IO_O)
 	@del $(GDT_O)
+	@del $(IDT_O)
 	@echo Cleaned.
 
 info:
@@ -138,11 +141,13 @@ objects:
 	@echo Compiling gdt...
 	@$(ELF_GCC) $(GDT) $(ELF_GCC_FLAGS) $(GDT_O)
 	@echo Done.
+	@echo Compiling idt...
+	@$(ELF_GCC) $(IDT) $(ELF_GCC_FLAGS) $(IDT_O)
+	@echo Done.
 
 link:
 	@echo Linking...
-	@$(LD) $(LD_FLAGS) $(KERNEL_ELF) $(KERNEL_O) $(GRAPHICS_O) $(FONT_O) $(COLOR_O)\
-		$(BMP_O) $(CONSOLE_O) $(STRING_O) $(STDLIB_O) $(STDIO_O) $(IO_O) $(GDT_O)
+	@$(LD) $(LD_FLAGS) $(KERNEL_ELF) $(KERNEL_O) $(GRAPHICS_O) $(FONT_O) $(COLOR_O) $(BMP_O) $(CONSOLE_O) $(STRING_O) $(STDLIB_O) $(STDIO_O) $(IO_O) $(GDT_O) $(IDT_O)
 	@echo Done.
 	@echo Copying BootLoader and kernel...
 	@copy .\bin\BootLoader.efi .\esp\EFI\BOOT\bootx64.efi

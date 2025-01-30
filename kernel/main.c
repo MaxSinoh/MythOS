@@ -38,6 +38,7 @@
 #include <fbc.h>
 #include <asm/hal/io.h>
 #include <asm/gdt/gdt.h>
+#include <asm/idt/idt.h>
 #include <gui/console/console.h>
 #include <gui/graphic/color.h>
 #include <gui/view/bmp.h>
@@ -72,8 +73,8 @@ void kernelMain(const struct FrameBufferConfig *fbc, BOOT_CONFIG *BootConfig)
     clearScreen(fbc);       // 清除屏幕
 
     console->config = fbc;       // 设置控制台帧缓冲区配置
-    console->fg_color = gold;    // 设置控制台前景色为金色
-    console->bg_color = red;     // 设置控制台背景色为红色
+    console->fg_color = black;    // 设置控制台前景色为金色
+    console->bg_color = yellow;     // 设置控制台背景色为红色
     memset(                      // 将控制台缓冲区内存清零
         console->buffer, 0,
         sizeof(console->buffer)
@@ -93,7 +94,8 @@ void kernelMain(const struct FrameBufferConfig *fbc, BOOT_CONFIG *BootConfig)
         fbc->horizontal_resolution - 192 - 20,
         fbc->vertical_resolution - 125 - 10 - 128, 1
     );
-    initgdt();                   // 初始化全局描述符表
+    initGDT();                   // 初始化全局描述符表
+    initIDT();                   // 初始化中断描述符表
     
     printk("  Welcome to MythOS\n");                      // 打印欢迎信息
     printk("  Copyright (C) 2025 MaxSinoh & LuoYuDian");  // 打印版权信息

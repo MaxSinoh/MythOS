@@ -243,7 +243,7 @@ void clearScreen(const struct FrameBufferConfig *config)
         // 遍历垂直分辨率范围内的每一个点
         for (int y = 0; y < config->vertical_resolution; y++) {
             // 绘制一个白色像素点
-            drawPixel(config, x, y, red);
+            drawPixel(config, x, y, yellow);
         }
     }
 }

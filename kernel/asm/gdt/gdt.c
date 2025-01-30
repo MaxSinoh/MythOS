@@ -76,7 +76,7 @@ void GDTInstall(int64_t num,uint64_t base,uint64_t limit,uint8_t access,uint8_t 
  * 接着，使用 LGDT 指令将 GDT 表的地址和界限加载到 GDT 寄存器中。最后，使用 MOV 指令
  * 将数据段选择子（dsel）加载到 DS、FS、GS、ES 和 SS 寄存器中，以完成 GDT 的初始化。
  */
-void initgdt(void)
+void initGDT(void)
 {
 	GDTPtr.limit= sizeof(GDT_entry_t) * GDT_LENGTH - 1; // GDT 表的大小 - 1
 	GDTPtr.base	= (uint64_t)&GDTentries;	            // 指向 GDT 表的首地址

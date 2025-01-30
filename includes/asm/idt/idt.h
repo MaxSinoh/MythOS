@@ -29,32 +29,36 @@
 //
 //      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-//                MYTHOSGDT HEADER FILE
+//              MYTHOS IDT HEADER FILE
 //
 //      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-#ifndef _GDT_H_
-#define _GDT_H_
+#ifndef _IDT_H_
+#define _IDT_H_
 
 #include <type.h>
 
-typedef struct GDT_entry_t 
-{
-	uint16_t limit_low;
-	uint16_t base_low;
-	uint8_t  base_middle;
-	uint8_t  access;
-	uint8_t  granularity;
-	uint8_t  base_high;
-} __attribute__((packed)) GDT_entry_t;
+struct IDTEntry {
+    UINT16 offset_low;
+    UINT16 selector;
+    UINT8 zero;
+    UINT8 type_attr;
+    UINT16 offset_high;
+} __attribute__((packed));
 
-typedef struct GDT_ptr_t 
-{
-	uint16_t limit;
-	uint64_t base;
-} __attribute__((packed)) GDT_ptr_t;
+struct IDTTable {
+    struct IDTEntry entry[256];
+} __attribute__((aligned(4096)));
 
-void GDTInstall(int64_t num,uint64_t base,uint64_t limit,uint8_t access,uint8_t gran);
-void initGDT(void);
+void initIDT();
+void IDTSet(int num, unsigned long selector);
+void IDTClear(int num);
+void IDTSetAll(unsigned long selector);
+void IDTClearAll(void);
+void IDTSetHandler(int num, void (*handler)(void));
+void IDTClearHandler(int num);
+void IDTSetHandlerAll(void (*handler)(void));
+void IDTClearHandlerAll(void);
+
 
 #endif
