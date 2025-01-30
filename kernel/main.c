@@ -43,7 +43,7 @@
 #include <gui/graphic/color.h>
 #include <gui/view/bmp.h>
 #include <image/logo.h>
-#include <image/MythOS_SpringFestivalSpecialVersion.h>
+#include <image/MythOS.h>
 #include <std/stdarg.h>
 #include <std/stdio.h>
 #include <std/string.h>
@@ -73,8 +73,8 @@ void kernelMain(const struct FrameBufferConfig *fbc, BOOT_CONFIG *BootConfig)
     clearScreen(fbc);       // 清除屏幕
 
     console->config = fbc;       // 设置控制台帧缓冲区配置
-    console->fg_color = black;    // 设置控制台前景色为金色
-    console->bg_color = yellow;     // 设置控制台背景色为红色
+    console->fg_color = black;   // 设置控制台前景色为黑色
+    console->bg_color = white;   // 设置控制台背景色为白色
     memset(                      // 将控制台缓冲区内存清零
         console->buffer, 0,
         sizeof(console->buffer)
@@ -86,13 +86,13 @@ void kernelMain(const struct FrameBufferConfig *fbc, BOOT_CONFIG *BootConfig)
         (struct FrameBufferConfig *)fbc,
         (BMP_IMAGE_HEADER *)logo,
         fbc->horizontal_resolution - 128 - 20,
-        fbc->vertical_resolution - 128 -10, 0
+        fbc->vertical_resolution - 128 -10, 1
     );
     drawBMP(                     // 绘制新春特别版图片到帧缓冲区
         (struct FrameBufferConfig *)fbc,
-        (BMP_IMAGE_HEADER *)MythOS_SpringFestivalSpecialVersion,
+        (BMP_IMAGE_HEADER *)MythOS,
         fbc->horizontal_resolution - 192 - 20,
-        fbc->vertical_resolution - 125 - 10 - 128, 1
+        fbc->vertical_resolution - 128 - 10 - 125, 1
     );
     initGDT();                   // 初始化全局描述符表
     initIDT();                   // 初始化中断描述符表
