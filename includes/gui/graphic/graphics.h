@@ -29,31 +29,41 @@
 //
 //      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-//               MYTHOS CONSOLE HEADER FILE
+//               MYTHOS GRAPHICS HEADER FILE
 //
 //      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-#ifndef _CONSOLE_H_
-#define _CONSOLE_H_
+#ifndef _GRAPHICS_H_
+#define _GRAPHICS_H_
 
-#include <gui/graphics.h>
-#define ROWS 25  // 定义控制台行数
-#define COLUMNS 90  // 定义控制台列数
+#include <fbc.h>
+#include <type.h>
 
-typedef struct {  // 定义一个控制台结构体
-    const struct FrameBufferConfig *config;  // 指向帧缓冲配置的指针
-    PixelColor fg_color;  // 前景色
-    PixelColor bg_color;  // 背景色
-    char buffer[ROWS + 1][COLUMNS + 1];  // 控制台缓冲区，多一行一列用于存储结束符
-    int cursor_row;  // 光标当前行
-    int cursor_column;  // 光标当前列
-} Console;
+typedef struct {
+    // 红色分量
+    uint8_t r;
+    // 绿色分量
+    uint8_t g;
+    // 蓝色分量
+    uint8_t b;
+} PixelColor;
 
-// 初始化控制台
-void initConsole(Console *console, const struct FrameBufferConfig *config, PixelColor fg_color, PixelColor bg_color);
-// 在控制台输出字符串
-void putString(Console *console, const char *s);
-// 在控制台换行
-void newLine(Console *console);
+// 在指定位置绘制一个像素点
+int drawPixel(const struct FrameBufferConfig *config, int x, int y, PixelColor c);
+
+// 在指定位置绘制一个矩形
+void drawRect(const struct FrameBufferConfig *config, int x, int y, int w, int h, PixelColor color);
+
+// 在指定两点之间绘制一条直线
+int drawLine(const struct FrameBufferConfig *config, int x1, int y1, int x2, int y2, PixelColor color);
+
+// 在指定位置绘制一个字符
+void drawChar(const struct FrameBufferConfig *config, const char c, int x, int y, PixelColor color, PixelColor back_color);
+
+// 在指定位置绘制一个字符串
+void drawStr(const struct FrameBufferConfig *config, const char *s, int x, int y, PixelColor color, PixelColor back_color);
+
+// 清除屏幕内容
+void clearScreen(const struct FrameBufferConfig *config);
 
 #endif

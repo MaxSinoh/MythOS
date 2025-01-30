@@ -36,7 +36,7 @@
 #ifndef _COLOR_H_
 #define _COLOR_H_
 
-#include "graphics.h"
+#include <gui/graphic/graphics.h>
 
 extern PixelColor black;        // 黑色
 extern PixelColor white;        // 白色

@@ -1,4 +1,4 @@
-//
+﻿//
 //                       _oo0oo_
 //                      o8888888o
 //                      88' . '88
@@ -29,32 +29,34 @@
 //
 //      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-//                MYTHOS IO HEADER FILE
+//                MYTHOS BMP HEADER FILE
 //
 //      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-#ifndef _IO_H_
-#define _IO_H_
+#ifndef _BMP_H_
+#define _BMP_H_
 
-#include <firmware/uefi.h>
+#include <type.h>
 
-void outb(uint16_t port,uint8_t value);
-uint8_t inb(uint16_t port);
+typedef struct 
+{
+	uint16_t magic;
+	uint32_t fileSize;
+	uint32_t reserved;
+	uint32_t bmpDataOffset;
+	uint32_t bmpInfoSize;
+	uint32_t frameWidth;
+	uint32_t frameHeight;
+	uint16_t reservedValue;
+	uint16_t bitsPerPixel;
+	uint32_t compressionMode;
+	uint32_t frameSize;
+	uint32_t horizontalResolution;
+	uint32_t verticalResolution;
+	uint32_t usedColorCount;
+	uint32_t importantColorCount;
+} __attribute__((packed)) BMP_IMAGE_HEADER;
 
-void outw(uint16_t port,uint16_t value);
-uint16_t inw(uint16_t port);
-
-void outl(uint16_t port,uint32_t value);
-uint32_t inl(uint16_t port);
-
-void insw(uint16_t port,void *buf,unsigned long n);
-void outsw(uint16_t port,const void *buf,unsigned long n);
-
-void insl(uint32_t port,void *addr,int cnt);
-void outsl(uint32_t port,const void *addr,int cnt);
-
-void enableInterrupts(void);
-void disableInterrupts(void);
-void halt(void);
+void drawBMP(struct FrameBufferConfig *config, BMP_IMAGE_HEADER *bmp, uint32_t x, uint32_t y, int isTransparent);
 
 #endif

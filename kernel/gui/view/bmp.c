@@ -33,9 +33,9 @@
 //
 //      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-#include <firmware/uefi.h>
-#include <gui/graphics.h>
-#include <view/bmp.h>
+#include <type.h>
+#include <gui/graphic/graphics.h>
+#include <gui/view/bmp.h>
 
 void drawBMP(struct FrameBufferConfig *config, BMP_IMAGE_HEADER *bmp, uint32_t x, uint32_t y, int isTransparent)
 {

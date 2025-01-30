@@ -36,9 +36,9 @@
 #include <std/stdlib.h>
 #include <std/stdio.h>
 #include <std/stdarg.h>
-#include <string/string.h>
-#include <fbc/fbc.h>
-#include <gui/color.h>
+#include <std/string.h>
+#include <fbc.h>
+#include <gui/graphic/color.h>
 
 struct EFI_GRAPHICS_OUTPUT_PROTOCOL *GOP;
 

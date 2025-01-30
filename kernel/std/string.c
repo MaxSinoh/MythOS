@@ -33,8 +33,9 @@
 //
 //      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-#include <firmware/uefi.h>
-#include <string/string.h>
+#include <uefi.h>
+#include <type.h>
+#include <std/string.h>
 
 struct EFI_BOOT_SERVICES *BS;
 struct EFI_LOADED_IMAGE_PROTOCOL *LIP;

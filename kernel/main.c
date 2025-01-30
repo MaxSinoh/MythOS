@@ -33,7 +33,19 @@
 //
 //      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-#include <universal.h>
+#include <uefi.h>
+#include <type.h>
+#include <fbc.h>
+#include <asm/hal/io.h>
+#include <asm/gdt/gdt.h>
+#include <gui/console/console.h>
+#include <gui/graphic/color.h>
+#include <gui/view/bmp.h>
+#include <image/logo.h>
+#include <image/MythOS_SpringFestivalSpecialVersion.h>
+#include <std/stdarg.h>
+#include <std/stdio.h>
+#include <std/string.h>
 
 Console *console;
 int printk(const char *fmt, ...)

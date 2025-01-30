@@ -1,4 +1,4 @@
-﻿//
+//
 //                       _oo0oo_
 //                      o8888888o
 //                      88' . '88
@@ -29,34 +29,33 @@
 //
 //      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-//                MYTHOS BMP HEADER FILE
+//               MYTHOS CONSOLE HEADER FILE
 //
 //      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-#ifndef _BMP_H_
-#define _BMP_H_
+#ifndef _CONSOLE_H_
+#define _CONSOLE_H_
 
-#include <firmware/uefi.h>
+#include <fbc.h>
+#include <gui/graphic/graphics.h>
 
-typedef struct 
-{
-	uint16_t magic;
-	uint32_t fileSize;
-	uint32_t reserved;
-	uint32_t bmpDataOffset;
-	uint32_t bmpInfoSize;
-	uint32_t frameWidth;
-	uint32_t frameHeight;
-	uint16_t reservedValue;
-	uint16_t bitsPerPixel;
-	uint32_t compressionMode;
-	uint32_t frameSize;
-	uint32_t horizontalResolution;
-	uint32_t verticalResolution;
-	uint32_t usedColorCount;
-	uint32_t importantColorCount;
-} __attribute__((packed)) BMP_IMAGE_HEADER;
+#define ROWS 25  // 定义控制台行数
+#define COLUMNS 90  // 定义控制台列数
 
-void drawBMP(struct FrameBufferConfig *config, BMP_IMAGE_HEADER *bmp, uint32_t x, uint32_t y, int isTransparent);
+typedef struct {  // 定义一个控制台结构体
+    const struct FrameBufferConfig *config;  // 指向帧缓冲配置的指针
+    PixelColor fg_color;  // 前景色
+    PixelColor bg_color;  // 背景色
+    char buffer[ROWS + 1][COLUMNS + 1];  // 控制台缓冲区，多一行一列用于存储结束符
+    int cursor_row;  // 光标当前行
+    int cursor_column;  // 光标当前列
+} Console;
+
+// 初始化控制台
+void initConsole(Console *console, const struct FrameBufferConfig *config, PixelColor fg_color, PixelColor bg_color);
+// 在控制台输出字符串
+void putString(Console *console, const char *s);
+// 在控制台换行
+void newLine(Console *console);
 
 #endif

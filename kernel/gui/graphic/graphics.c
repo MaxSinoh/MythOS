@@ -33,9 +33,9 @@
 //
 //      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-#include <fbc/fbc.h>
-#include <gui/graphics.h>
-#include <gui/color.h>
+#include <fbc.h>
+#include <gui/graphic/graphics.h>
+#include <gui/graphic/color.h>
 
 extern uint8_t system_font[];
 

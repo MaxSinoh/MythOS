@@ -33,8 +33,8 @@
 //
 //      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-#include <console/console.h>
-#include <string/string.h>
+#include <gui/console/console.h>
+#include <std/string.h>
 
 /**
  * 在控制台上打印字符串

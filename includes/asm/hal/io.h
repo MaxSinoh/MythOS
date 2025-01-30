@@ -29,22 +29,32 @@
 //
 //      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-//               MYTHOS STRING HEADER FILE
+//                MYTHOS IO HEADER FILE
 //
 //      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-#ifndef _STRING_H_
-#define _STRING_H_
+#ifndef _IO_H_
+#define _IO_H_
 
-#include <firmware/uefi.h>
+#include <type.h>
 
-void memset(void *dst_, UINT8 value, UINTN size);
-void *memcpy(void *dst_, const void *src_, UINTN size);
-void *malloc(int buf_size);
-void free(void *buf);
-EFI_STATUS mallocAt(EFI_PHYSICAL_ADDRESS addr, UINTN size);
-void freeAt(EFI_PHYSICAL_ADDRESS addr, UINTN size);
-char *strcpy(char *dst, const char *src); // 拷贝字符串
-int strlen(const char *str);             // 计算字符串长度
+void outb(uint16_t port,uint8_t value);
+uint8_t inb(uint16_t port);
+
+void outw(uint16_t port,uint16_t value);
+uint16_t inw(uint16_t port);
+
+void outl(uint16_t port,uint32_t value);
+uint32_t inl(uint16_t port);
+
+void insw(uint16_t port,void *buf,unsigned long n);
+void outsw(uint16_t port,const void *buf,unsigned long n);
+
+void insl(uint32_t port,void *addr,int cnt);
+void outsl(uint32_t port,const void *addr,int cnt);
+
+void enableInterrupts(void);
+void disableInterrupts(void);
+void halt(void);
 
 #endif

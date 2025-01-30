@@ -29,40 +29,35 @@
 //
 //      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-//               MYTHOS GRAPHICS HEADER FILE
+//                MYTHOS TYPE HEADER FILE
 //
 //      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-#ifndef _GRAPHICS_H_
-#define _GRAPHICS_H_
+#ifndef _TYPE_H_
+#define _TYPE_H_
 
-#include <fbc/fbc.h>
+typedef unsigned char       UINT8;
+typedef unsigned short      UINT16;
+typedef unsigned int        UINT32;
+typedef unsigned long long  UINT64;
 
-typedef struct {
-    // 红色分量
-    uint8_t r;
-    // 绿色分量
-    uint8_t g;
-    // 蓝色分量
-    uint8_t b;
-} PixelColor;
+typedef UINT64  UINTN; 
+typedef UINTN   EFI_STATUS;
+typedef void    VOID;
+typedef UINT16  CHAR16;
 
-// 在指定位置绘制一个像素点
-int drawPixel(const struct FrameBufferConfig *config, int x, int y, PixelColor c);
+typedef UINTN EFI_PHYSICAL_ADDRESS;
+typedef UINTN EFI_VIRTUAL_ADDRESS;
 
-// 在指定位置绘制一个矩形
-void drawRect(const struct FrameBufferConfig *config, int x, int y, int w, int h, PixelColor color);
+typedef VOID *EFI_HANDLE;
+typedef VOID *EFI_EVENT;
 
-// 在指定两点之间绘制一条直线
-int drawLine(const struct FrameBufferConfig *config, int x1, int y1, int x2, int y2, PixelColor color);
+typedef unsigned char       uint8_t;
+typedef unsigned short      uint16_t;
+typedef unsigned int        uint32_t;
+typedef unsigned long long  uint64_t;
+typedef unsigned long int   size_t;
 
-// 在指定位置绘制一个字符
-void drawChar(const struct FrameBufferConfig *config, const char c, int x, int y, PixelColor color, PixelColor back_color);
-
-// 在指定位置绘制一个字符串
-void drawStr(const struct FrameBufferConfig *config, const char *s, int x, int y, PixelColor color, PixelColor back_color);
-
-// 清除屏幕内容
-void clearScreen(const struct FrameBufferConfig *config);
+typedef long long           int64_t;
 
 #endif

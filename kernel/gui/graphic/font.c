@@ -33,7 +33,7 @@
 //
 //      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-#include <firmware/uefi.h>
+#include <type.h>
 
 uint8_t system_font[] = 
 {

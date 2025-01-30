@@ -33,8 +33,8 @@
 //
 //      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-#include <gui/graphics.h>
-#include <gui/color.h>
+#include <gui/graphic/graphics.h>
+#include <gui/graphic/color.h>
 
 PixelColor black =       {0, 0, 0};         // 黑色。
 PixelColor white =       {255, 255, 255};   // 白色。

@@ -29,24 +29,22 @@
 //
 //      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-//             MYTHOS UNIVERSAL HEADER FILE
+//               MYTHOS STRING HEADER FILE
 //
 //      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-#ifndef _UNIVERSAL_H_
-#define _UNIVERSAL_H_
+#ifndef _STRING_H_
+#define _STRING_H_
 
-#include <firmware/uefi.h>
-#include <gui/graphics.h>
-#include <gui/color.h>
-#include <console/console.h>
-#include <std/stdio.h>
-#include <string/string.h>
-#include <view/bmp.h>
-#include <std/stdarg.h>
-#include <image/logo.h>
-#include <image/MythOS_SpringFestivalSpecialVersion.h>
-#include <hal/io.h>
-#include <asm/gdt.h>
+#include <type.h>
+
+void memset(void *dst_, UINT8 value, UINTN size);
+void *memcpy(void *dst_, const void *src_, UINTN size);
+void *malloc(int buf_size);
+void free(void *buf);
+EFI_STATUS mallocAt(EFI_PHYSICAL_ADDRESS addr, UINTN size);
+void freeAt(EFI_PHYSICAL_ADDRESS addr, UINTN size);
+char *strcpy(char *dst, const char *src); // 拷贝字符串
+int strlen(const char *str);             // 计算字符串长度
 
 #endif

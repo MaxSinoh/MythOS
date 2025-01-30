@@ -36,7 +36,7 @@
 #ifndef _GDT_H_
 #define _GDT_H_
 
-#include <firmware/uefi.h>
+#include <type.h>
 
 typedef struct GDT_entry_t 
 {

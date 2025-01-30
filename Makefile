@@ -51,26 +51,26 @@ BOOT_LOADER_EFI = .\bin\BootLoader.efi
 KERNEL = .\kernel\main.c
 KERNEL_O = .\kernel\main.o
 KERNEL_ELF = .\bin\kernel.elf
-GRAPHICS = .\kernel\gui\graphics.c
-GRAPHICS_O = .\kernel\gui\graphics.o
-FONT = .\kernel\gui\font.c
-FONT_O = .\kernel\gui\font.o
-COLOR = .\kernel\gui\color.c
-COLOR_O = .\kernel\gui\color.o
-BMP = .\kernel\view\bmp.c
-BMP_O = .\kernel\view\bmp.o
-CONSOLE = .\kernel\console\console.c
-CONSOLE_O = .\kernel\console\console.o
-STRING = .\kernel\string\string.c
-STRING_O = .\kernel\string\string.o
+GRAPHICS = .\kernel\gui\graphic\graphics.c
+GRAPHICS_O = .\kernel\gui\graphic\graphics.o
+FONT = .\kernel\gui\graphic\font.c
+FONT_O = .\kernel\gui\graphic\font.o
+COLOR = .\kernel\gui\graphic\color.c
+COLOR_O = .\kernel\gui\graphic\color.o
+BMP = .\kernel\gui\view\bmp.c
+BMP_O = .\kernel\gui\view\bmp.o
+CONSOLE = .\kernel\gui\console\console.c
+CONSOLE_O = .\kernel\gui\console\console.o
+STRING = .\kernel\std\string.c
+STRING_O = .\kernel\std\string.o
 STDLIB = .\kernel\std\stdlib.c
 STDLIB_O = .\kernel\std\stdlib.o
 STDIO = .\kernel\std\stdio.c
 STDIO_O = .\kernel\std\stdio.o
-IO = .\kernel\hal\io.c
-IO_O = .\kernel\hal\io.o
-GDT = .\kernel\asm\gdt.c
-GDT_O = .\kernel\asm\gdt.o
+IO = .\kernel\asm\hal\io.c
+IO_O = .\kernel\asm\hal\io.o
+GDT = .\kernel\asm\gdt\gdt.c
+GDT_O = .\kernel\asm\gdt\gdt.o
 
 ESP = .\esp
 ESP_BOOTLOADER = $(ESP)\EFI\BOOT\BOOTX64.EFI
@@ -144,6 +144,10 @@ link:
 	@$(LD) $(LD_FLAGS) $(KERNEL_ELF) $(KERNEL_O) $(GRAPHICS_O) $(FONT_O) $(COLOR_O)\
 		$(BMP_O) $(CONSOLE_O) $(STRING_O) $(STDLIB_O) $(STDIO_O) $(IO_O) $(GDT_O)
 	@echo Done.
+	@echo Copying BootLoader and kernel...
+	@copy .\bin\BootLoader.efi .\esp\EFI\BOOT\bootx64.efi
+	@copy .\bin\kernel.elf .\esp\kernel.elf
+	@echo Done.
 
 done:
 	@echo All done.
@@ -151,9 +155,5 @@ done:
 run: info all done qemu
 
 qemu:
-	@echo Copying BootLoader and kernel...
-	@copy .\bin\BootLoader.efi .\esp\EFI\BOOT\bootx64.efi
-	@copy .\bin\kernel.elf .\esp\kernel.elf
-	@echo Done.
 	@echo Running MythOS in QEMU virtual machine...
 	@$(QEMU) $(QEMU_FLAGS)

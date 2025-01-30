@@ -33,7 +33,9 @@
 //
 //      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-#include "../includes/fbc/fbc.h"
+#include <type.h>
+#include <uefi.h>
+#include <fbc.h>
 
 // 定义EFI系统表指针
 struct EFI_SYSTEM_TABLE *ST;

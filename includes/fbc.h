@@ -36,7 +36,7 @@
 #ifndef _FBC_H_
 #define _FBC_H_
 
-#include <firmware/uefi.h>
+#include <type.h>
 
 enum PixelFormat {
     // RGB颜色格式，红色在前，绿色居中，蓝色在后

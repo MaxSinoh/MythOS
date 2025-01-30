@@ -33,7 +33,7 @@
 //
 //      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-#include <asm/gdt.h>
+#include <asm/gdt/gdt.h>
 
 #define GDT_LENGTH 5            // GDT 表中的描述符数量
 #define dataSelector 0x10       // 数据段选择子，用于数据段和堆栈段的访问

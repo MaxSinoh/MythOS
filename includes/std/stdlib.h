@@ -36,7 +36,7 @@
 #ifndef _STD_H_
 #define _STD_H_
 
-#include <firmware/uefi.h>
+#include <type.h>
 
 void itoa(uint32_t value, char **buf_ptr_addr, uint8_t base);
 
