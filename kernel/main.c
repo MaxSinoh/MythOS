@@ -42,6 +42,7 @@
 #include <gui/console/console.h>
 #include <gui/graphic/color.h>
 #include <gui/view/bmp.h>
+#include <gui/printk.h>
 #include <image/logo.h>
 #include <image/MythOS.h>
 #include <std/stdarg.h>

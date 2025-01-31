@@ -29,39 +29,13 @@
 //
 //      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-//              MYTHOS IDT HEADER FILE
+//              MYTHOS PRINTK HEADER FILE
 //
 //      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-#ifndef _IDT_H_
-#define _IDT_H_
+#ifndef _PRINTK_H_
+#define _PRINTK_H_
 
-#include <type.h>
-
-// 定义中断门描述符结构
-typedef struct {
-    uint16_t offset_low;      // 中断处理函数偏移地址低16位
-    uint16_t selector;        // 代码段选择子
-    uint8_t  ist;             // 中断栈表索引
-    uint8_t  type_attr;       // 中断门类型和属性
-    uint16_t offset_middle;   // 中断处理函数偏移地址中间16位
-    uint32_t offset_high;     // 中断处理函数偏移地址高32位
-    uint32_t reserved;        // 保留字段
-} IDTEntry;
-
-// 定义IDT指针结构
-typedef struct {
-    uint16_t limit;           // IDT表的大小 - 1
-    uint64_t base;            // IDT表的基地址
-} IDTPtr;
-
-// 定义中断处理函数类型
-typedef void (*InterruptHandler)(void);
-
-// 初始化IDT
-void initIDT(void);
-
-// 注册中断处理函数
-void registerInterruptHandler(uint8_t index, InterruptHandler handler);
+int printk(const char *fmt, ...);
 
 #endif
