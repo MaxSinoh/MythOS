@@ -35,16 +35,35 @@
 
 #include <asm/idt/idt.h>
 
-#define IDT_GATE(num, selector) \
-    ((unsigned long)selector << 16 | (unsigned long)(num) << 8 | 0x8E)
+// 中断门描述符格式宏定义
+#define IDT_GATE(num, selector) ((unsigned long)selector << 16 | (unsigned long)(num) << 8 | 0x8E)
+// 中断门描述符格式：中断向量号 | 代码段选择子 | 中断类型（0x8E）
 
+/**
+ * @brief 初始化中断描述符表（IDT）
+ *
+ * 该函数负责初始化中断描述符表（IDT），为每个中断向量设置中断门。
+ *
+ * @details
+ * 该函数首先定义一个大小为256的数组idt，用于存储中断描述符表的内容。
+ * 然后，通过一个循环为数组中的每个元素设置中断门，中断门的目标地址由宏IDT_GATE计算得出。
+ * 最后，使用`lidt`指令将idt数组的地址加载到中断描述符表寄存器中，完成IDT的初始化。
+ */
 void initIDT(void) {
+    // 初始化一个大小为256的数组，用于存储中断描述符表（IDT）
     unsigned long idt[256];
     int i;
 
+    // 遍历数组，为每个中断向量分配一个空的中断门
     for (i = 0; i < 256; i++) {
+        // 使用IDT_GATE宏生成一个中断门描述符，并将其存储在idt数组中
+        // 参数i表示中断向量号，0x08表示中断门类型
         idt[i] = IDT_GATE(i, 0x08);
     }
 
+    // 使用lidt指令加载中断描述符表到CPU
+    // "%0"是一个占位符，用于在汇编代码中引用C语言变量
+    // "r"表示输入操作数，这里将idt数组的地址传递给汇编代码
+    // "volatile"关键字告诉编译器，该汇编代码不能被优化掉
     __asm__ volatile("lidt (%0)" ::"r"(idt));
 }
