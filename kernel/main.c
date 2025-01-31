@@ -88,7 +88,7 @@ void kernelMain(const struct FrameBufferConfig *fbc, BOOT_CONFIG *BootConfig)
         fbc->horizontal_resolution - 128 - 20,
         fbc->vertical_resolution - 128 -10, 1
     );
-    drawBMP(                     // 绘制新春特别版图片到帧缓冲区
+    drawBMP(                     // 绘制MythOS图片到帧缓冲区
         (struct FrameBufferConfig *)fbc,
         (BMP_IMAGE_HEADER *)MythOS,
         fbc->horizontal_resolution - 192 - 20,
