@@ -95,7 +95,6 @@ void initIDT(void) {
     __asm__ volatile("lidt (%0)" ::"r"(&idtPtr));
 }
 
-
 /**
  * @brief 注册中断处理函数
  *
