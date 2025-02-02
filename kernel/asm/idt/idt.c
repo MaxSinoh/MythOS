@@ -35,37 +35,20 @@
 
 #include <asm/idt/idt.h>
 
+// 中断门描述符格式宏定义
+#define IDT_GATE(num, selector) ((unsigned long)selector << 16 | (unsigned long)(num) << 8 | 0x8E)
+// 中断门描述符格式：中断向量号 | 代码段选择子 | 中断类型（0x8E）
+
 // 中断处理函数数组
 InterruptHandler interruptHandlers[256] = {0};
 
-/**
- * @brief 设置中断描述符表（IDT）条目
- *
- * 该函数用于设置中断描述符表中的一个条目，包括中断处理程序的偏移量、段选择器、中断堆栈表索引、类型属性和保留字段。
- *
- * @param entry 指向要设置的IDT条目的指针
- * @param offset 中断处理程序的偏移量
- * @param selector 段选择器
- * @param ist 中断堆栈表索引
- * @param type_attr 类型属性
- */
-static void setIDTEntry(IDTEntry *entry, uint64_t offset, uint16_t selector, uint8_t ist, uint8_t type_attr) {
-    // 设置偏移量的低16位
-    entry->offset_low = (uint16_t)(offset & 0xFFFF);
-    // 设置段选择子
+static void setIDTEntry(IDTEntry *entry, uint16_t offset, uint16_t selector, uint16_t type_attr)
+{
+    entry->offset_low = offset & 0xFFFF;
     entry->selector = selector;
-    // 设置中断栈表索引
-    entry->ist = ist;
-    // 设置类型属性
     entry->type_attr = type_attr;
-    // 设置偏移量的中间16位
-    entry->offset_middle = (uint16_t)((offset >> 16) & 0xFFFF);
-    // 设置偏移量的高32位
-    entry->offset_high = (uint32_t)(offset >> 32);
-    // 保留字段设置为0
-    entry->reserved = 0;
+    entry->offset_high = (offset >> 16) & 0xFFFF;
 }
-
 
 /**
  * @brief 初始化中断描述符表（IDT）
@@ -76,23 +59,18 @@ static void setIDTEntry(IDTEntry *entry, uint64_t offset, uint16_t selector, uin
  */
 void initIDT(void) {
     // 定义IDT表和IDT指针结构体
-    IDTEntry idt[256];
-    // 初始化IDT指针结构体
-    IDTPtr idtPtr;
-    // 初始化IDT表项
-    // 循环初始化每个IDT表项
+    unsigned long idt[256];
+ // 遍历数组，为每个中断向量分配一个空的中断门
     for (int i = 0; i < 256; i++) {
-        // 设置每个IDT表项的属性
-        setIDTEntry(&idt[i], (uint64_t)interruptHandlers[i], 0x08, 0, 0x8E);
+        // 使用IDT_GATE宏生成一个中断门描述符，并将其存储在idt数组中
+        // 参数i表示中断向量号，0x08表示中断门类型
+        idt[i] = IDT_GATE(i, 0x08);
     }
-    // 设置IDT指针
-    // 设置IDT表的大小
-    idtPtr.limit = sizeof(IDTEntry) * 256 - 1;
-    // 设置IDT表的基地址
-    idtPtr.base = (uint64_t)&idt;
-    // 加载IDT
-    // 使用内联汇编加载IDT表
-    __asm__ volatile("lidt (%0)" ::"r"(&idtPtr));
+    // 使用lidt指令加载中断描述符表到CPU
+    // "%0"是一个占位符，用于在汇编代码中引用C语言变量
+    // "r"表示输入操作数，这里将idt数组的地址传递给汇编代码
+    // "volatile"关键字告诉编译器，该汇编代码不能被优化掉
+    __asm__ volatile("lidt (%0)" ::"r"(idt));
 }
 
 /**

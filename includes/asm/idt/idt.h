@@ -42,11 +42,8 @@
 typedef struct {
     uint16_t offset_low;      // 中断处理函数偏移地址低16位
     uint16_t selector;        // 代码段选择子
-    uint8_t  ist;             // 中断栈表索引
-    uint8_t  type_attr;       // 中断门类型和属性
-    uint16_t offset_middle;   // 中断处理函数偏移地址中间16位
-    uint32_t offset_high;     // 中断处理函数偏移地址高32位
-    uint32_t reserved;        // 保留字段
+    uint16_t type_attr;       // 中断门类型和属性
+    uint16_t offset_high;     // 中断处理函数偏移地址高32位
 } IDTEntry;
 
 // 定义IDT指针结构
@@ -57,10 +54,10 @@ typedef struct {
 
 // 定义中断处理函数类型
 typedef void (*InterruptHandler)(void);
-
+// 设置IDT表项
+static void setIDTEntry(IDTEntry *entry, uint16_t offset, uint16_t selector, uint16_t type_attr)
 // 初始化IDT
 void initIDT(void);
-
 // 注册中断处理函数
 void registerInterruptHandler(uint8_t index, InterruptHandler handler);
 
