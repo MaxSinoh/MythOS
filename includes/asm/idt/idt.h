@@ -55,10 +55,8 @@ typedef struct {
 // 定义中断处理函数类型
 typedef void (*InterruptHandler)(void);
 // 设置IDT表项
-static void setIDTEntry(IDTEntry *entry, uint16_t offset, uint16_t selector, uint16_t type_attr)
+void setIDTEntry(IDTEntry *entry, uint16_t offset, uint16_t selector, uint16_t type_attr);
 // 初始化IDT
 void initIDT(void);
-// 注册中断处理函数
-void registerInterruptHandler(uint8_t index, InterruptHandler handler);
 
 #endif

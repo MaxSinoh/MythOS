@@ -42,7 +42,7 @@
 // 中断处理函数数组
 InterruptHandler interruptHandlers[256] = {0};
 
-static void setIDTEntry(IDTEntry *entry, uint16_t offset, uint16_t selector, uint16_t type_attr)
+void setIDTEntry(IDTEntry *entry, uint16_t offset, uint16_t selector, uint16_t type_attr)
 {
     entry->offset_low = offset & 0xFFFF;
     entry->selector = selector;
