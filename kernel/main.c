@@ -49,6 +49,9 @@
 #include <std/stdio.h>
 #include <std/string.h>
 
+#define OSNAME "MythOS"
+#define OSVERSION "v0.2.11"
+
 Console *console;
 int printk(const char *fmt, ...)
 {
@@ -96,10 +99,10 @@ void kernelMain(const struct FrameBufferConfig *fbc, BOOT_CONFIG *BootConfig)
         fbc->vertical_resolution - 128 - 10 - 125, 1
     );
     initGDT();                   // 初始化全局描述符表
+    printk("  GDT done\n");
     initIDT();                   // 初始化中断描述符表
-    
-    printk("  Welcome to MythOS\n");                      // 打印欢迎信息
-    printk("  Copyright (C) 2025 MaxSinoh & LuoYuDian");  // 打印版权信息
+    printk("  IDT done\n");
+    printk("  %s [%s]", OSNAME, OSVERSION);  // 打印版权信息
     
     halt();                      // 停止执行
 }
