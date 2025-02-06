@@ -1,5 +1,5 @@
 # MythOS
-<br><img src="./materials/MythOS.png" width="64" height="64" alt="MythOS">
+<br><img src="./materials/logo.png" width="64" height="64" alt="MythOS">
 - 一个基于UEFI的现代操作系统，采用x86-64架构。
 - 版权所有 © 2025 MaxSinoh & LuoYuDian.
 - 保留所有权利。
@@ -34,7 +34,7 @@ make run
 - 之后你将看到MythOS的屏幕。
 ---
 # MythOS
-<br><img src="./materials/MythOS.png" width="64" height="64" alt="MythOS">
+<br><img src="./materials/logo.png" width="64" height="64" alt="MythOS">
 - A modern operating system with x86-64 architecture based on UEFI.
 - Copyright (c) 2025 MaxSinoh & LuoYuDian.
 - All rights reserved.
