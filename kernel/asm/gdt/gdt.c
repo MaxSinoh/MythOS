@@ -88,7 +88,9 @@ void initGDT(void)
 
 	__asm__ volatile                    // 使用汇编语言加载 GDT 寄存器并设置数据段选择子
 	(
+		".intel_syntax noprefix\n"
 		"lgdt [GDTPtr]\n"               // 将 GDT 表加载到 GDT 寄存器中
+		".att_syntax prefix\n"
 		:
 		: [GDTPtr] "*p" (&GDTPtr)       // 将 GDT 表的地址传递给汇编代码
         : "memory"                      // 告诉编译器，这段代码会修改内存中的数据
