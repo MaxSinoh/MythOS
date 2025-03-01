@@ -39,54 +39,20 @@
 #define IDT_GATE(num, selector) ((unsigned long)selector << 16 | (unsigned long)(num) << 8 | 0x8E)
 // 中断门描述符格式：中断向量号 | 代码段选择子 | 中断类型（0x8E）
 
-// 中断处理函数指针数组，用于存储每个中断的处理程序
-InterruptHandler interruptHandlers[256] = {0};
+// 内核代码段选择子，通常定义为0x08（GDT的第1个条目）
+#define KERNEL_CS 0x08
 
-
-void interruptDefaultHandler(void)
-{
-    __asm__ volatile("iret");
-}
-
-void setInterruptGate(int vector, uint32_t offset, uint32_t selector, uint16_t type_attr)
-{
-    IDTEntry *entry = &interruptHandlers[vector];
-    entry->offset_low = offset & 0xFFFF;
-    entry->selector = selector;
-    entry->type_attr = type_attr;
-    entry->offset_high = (offset >> 16) & 0xFFFF;
-}
-
-/**
- * @brief 初始化中断描述符表（IDT）
- *
- * 该函数负责初始化中断描述符表（IDT），并加载到CPU中。
- *
- * @return 无返回值
- */
+// 初始化中断描述符表
 void initIDT(void) {
-    // 定义IDT表和IDT指针结构体
-    unsigned long idt[256];
-    for (int i = 0; i < 256; i++)
-    {
-        setInterruptGate(i, (uint32_t)interruptDefaultHandler, (1 * 8), (1 << 15) | (0 << 13) | (0x8E << 8));
-    }
-    // 使用lidt指令加载中断描述符表到CPU
-    // "%0"是一个占位符，用于在汇编代码中引用C语言变量
-    // "r"表示输入操作数，这里将idt数组的地址传递给汇编代码
-    // "volatile"关键字告诉编译器，该汇编代码不能被优化掉
-    __asm__ volatile("lidt (%0)" ::"r"(idt));
-}
+    unsigned long idt[256]; // 中断门描述符表，大小为256个条目（每个条目8字节）
 
-/**
- * @brief 注册中断处理函数
- *
- * 将指定的中断处理函数注册到中断处理函数数组中。
- *
- * @param index 中断索引
- * @param handler 中断处理函数
- */
-void registerInterruptHandler(uint8_t index, InterruptHandler handler) {
-    // 将中断处理程序handler注册到中断处理程序数组中对应索引index的位置
-    interruptHandlers[index] = handler;
+    for (int i = 0; i < 256; ++i) {
+        idt[i] = IDT_GATE(i, KERNEL_CS); // 设置所有中断门的代码段选择子为KERNEL_CS
+    }
+    // 加载中断描述符表
+    __asm__ volatile("lidt (%0)" ::"r"(idt)); // 使用内联汇编将IDT的地址加载到IDTR寄存器中，以便CPU能够访问它。
+    // 这里使用了GCC的内联汇编语法。%0是一个占位符，代表第一个输入操作数（这里是idt的地址）。
+    // "r"表示这是一个寄存器类型的约束，告诉编译器将这个值放入一个通用寄存器中。
+    // "lidt"是加载IDT的指令，它将紧跟其后的内存地址（即idt数组）加载到IDTR寄存器中。
+    // ::"r"(idt)这部分是GCC内联汇编的输入部分，它告诉编译器将idt变量的地址放入一个寄存器中。
 }

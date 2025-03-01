@@ -99,10 +99,9 @@ void kernelMain(const struct FrameBufferConfig *fbc, BOOT_CONFIG *BootConfig)
         fbc->vertical_resolution - 128 - 10 - 125, 1
     );
     initGDT();                   // 初始化全局描述符表
-    printk("  GDT done\n");
     initIDT();                   // 初始化中断描述符表
-    printk("  IDT done\n");
-    printk("  %s [%s]", OSNAME, OSVERSION);  // 打印版权信息
+    printk("  %s [%s]\n", OSNAME, OSVERSION);  // 打印版权信息
+    printk("  Copyright (c) %s Project", OSNAME);
     
     halt();                      // 停止执行
 }
