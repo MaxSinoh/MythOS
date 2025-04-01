@@ -38,6 +38,20 @@
 
 #include <type.h>
 
+struct IDTentry {
+    uint16_t offset_low;    // 中断处理函数地址低16位
+    uint16_t selector;      // 代码段选择子（如 0x08 对应内核代码段）
+    uint8_t zero;           // 保留字段（通常为0）
+    uint8_t type_attr;      // 类型与属性（如中断门/陷阱门、DPL权限）
+    uint16_t offset_high;   // 中断处理函数地址高16位
+} __attribute__((packed));
+
+struct idt_ptr {
+    uint16_t limit;
+    uint32_t base;
+} __attribute__((packed));
+
+
 // 初始化IDT
 void initIDT(void);
 
