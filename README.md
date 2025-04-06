@@ -1,7 +1,7 @@
 # MythOS
 <br><img src="./materials/logo.png" width="64" height="64" alt="MythOS">
 - 一个基于UEFI的现代操作系统，采用x86-64架构。
-- 版权所有 © 2025 MaxSinoh & LuoYuDian.
+- 版权所有 © 2025 MythOS Project.
 - 保留所有权利。
 ---
 ## 工具链
@@ -36,7 +36,7 @@ make run
 # MythOS
 <br><img src="./materials/logo.png" width="64" height="64" alt="MythOS">
 - A modern operating system with x86-64 architecture based on UEFI.
-- Copyright (c) 2025 MaxSinoh & LuoYuDian.
+- Copyright (c) 2025 MythOS Project.
 - All rights reserved.
 ---
 ## Tools
