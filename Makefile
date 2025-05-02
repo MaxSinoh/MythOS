@@ -33,6 +33,8 @@
 #
 #      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+SHELL = C:\Windows\System32\\cmd.exe
+
 GCC = gcc
 ELF_GCC = x86_64-elf-gcc
 LD = x86_64-elf-ld
@@ -80,30 +82,19 @@ ESP = .\esp
 ESP_BOOTLOADER = $(ESP)\EFI\BOOT\BOOTX64.EFI
 ESP_KERNEL = $(ESP)\kernel.elf
 
-all: objects efi link
+all: info clean objects efi link
 
 clean:
 	@echo Cleaning...
-	@del $(BOOT_LOADER_EFI)
-	@del $(KERNEL_ELF)
-	@del $(KERNEL_O)
-	@del $(GRAPHICS_O)
-	@del $(FONT_O)
-	@del $(COLOR_O)
-	@del $(BMP_O)
-	@del $(CONSOLE_O)
-	@del $(STRING_O)
-	@del $(STDLIB_O)
-	@del $(STDIO_O)
-	@del $(IO_O)
-	@del $(GDT_O)
-	@del $(IDT_O)
-	@del $(DIH_O)
+	@del .\\bin
+	@del .\\esp
 	@echo Cleaned.
 
 info:
 	@echo Welcome to compile MythOS.
 	@echo Preparing for compiling...
+	-@mkdir .\\bin\\EFI\\BOOT
+	-@mkdir .\\esp\\EFI\\BOOT
 
 efi:
 	@echo Compiling BootLoader...
@@ -158,12 +149,13 @@ link:
 	@echo Copying BootLoader and kernel...
 	@copy .\bin\BootLoader.efi .\esp\EFI\BOOT\bootx64.efi
 	@copy .\bin\kernel.elf .\esp\kernel.elf
+	@del .\\bin
 	@echo Done.
 
 done:
 	@echo All done.
 
-run: info all done qemu
+run: all done qemu
 
 qemu:
 	@echo Running MythOS in QEMU virtual machine...

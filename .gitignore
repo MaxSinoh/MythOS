@@ -1,4 +1,6 @@
 *.o
+*.elf
+*.efi
 bin
 esp
 .vscode
