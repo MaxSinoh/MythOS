@@ -11,7 +11,6 @@
 - GNU Make
 ---
 ## 编译
-### Tip: 前提是你的目录中有一个'bin'文件夹。
 #### 如果要编译但不运行，可以输入：
 ```
 make all
@@ -19,7 +18,6 @@ make all
 #### 之后你将得到一些对象文件，一个EFI文件和一个elf文件。
 ---
 ## 运行
-### Tip: 前提是你的目录中有一个'esp'文件夹，并且其中有一个'EFI'文件夹，然后还有一个'BOOT'文件夹在'EFI'里面。
 #### 如果要编译并运行MythOS，可以输入：
 ```
 make run
@@ -46,7 +44,6 @@ make run
 - GNU Make
 ---
 ## Compile
-### Tip: The premise is that there is a 'bin' folder in your directory.
 #### If you want to compiler but not run it, you can type:
 ```
 make all
@@ -54,7 +51,6 @@ make all
 #### Then you will get some object files, one EFI file and one elf file.
 ---
 ## Run
-### Tip: The premise is that there is a 'esp' folder in your directory and there is a 'EFI' folder in 'esp', and then there is a 'BOOT' folder in 'EFI'.
 #### If you want to compile MythOS and run it, you can type:
 ```
 make run
