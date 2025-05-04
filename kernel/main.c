@@ -38,7 +38,6 @@
 #include <fbc.h>
 #include <asm/hal/io.h>
 #include <asm/gdt/gdt.h>
-#include <asm/idt/idt.h>
 #include <gui/console/console.h>
 #include <gui/graphic/color.h>
 #include <gui/view/bmp.h>
@@ -99,7 +98,6 @@ void kernelMain(const struct FrameBufferConfig *fbc, BOOT_CONFIG *BootConfig)
         fbc->vertical_resolution - 128 - 10 - 125, 1
     );
     initGDT();                   // 初始化全局描述符表
-    initIDT();                   // 初始化中断描述符表
     printk("  %s [%s]\n", OSNAME, OSVERSION);  // 打印版权信息
     printk("  Copyright (c) %s Project", OSNAME);
     

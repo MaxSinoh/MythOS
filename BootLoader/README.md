@@ -1,2 +1,5 @@
 # MythOS BootLoader
-MythOS启动引导程序。
+MythOS BootLoader
+MythOS启动引导程序
+Запуск загрузки MythOS
+Bootstrap pour MythOS

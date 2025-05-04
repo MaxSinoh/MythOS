@@ -1,4 +1,5 @@
 # MythOS materials
+[简体中文](README_ZN.md)
 ### Reference materials for MythOS.
 ---
 ## UEFI_Spec_2_10_Aug29.pdf
