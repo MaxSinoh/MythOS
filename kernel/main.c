@@ -43,13 +43,12 @@
 #include <gui/view/bmp.h>
 #include <gui/printk.h>
 #include <image/logo.h>
-#include <image/MythOS.h>
 #include <std/stdarg.h>
 #include <std/stdio.h>
 #include <std/string.h>
 
 #define OSNAME "MythOS"
-#define OSVERSION "v0.2.11"
+#define OSVERSION "v0.3.1"
 
 Console *console;
 int printk(const char *fmt, ...)
@@ -91,15 +90,9 @@ void kernelMain(const struct FrameBufferConfig *fbc, BOOT_CONFIG *BootConfig)
         fbc->horizontal_resolution - 128 - 20,
         fbc->vertical_resolution - 128 -10, 1
     );
-    drawBMP(                     // 绘制MythOS图片到帧缓冲区
-        (struct FrameBufferConfig *)fbc,
-        (BMP_IMAGE_HEADER *)MythOS,
-        fbc->horizontal_resolution - 192 - 20,
-        fbc->vertical_resolution - 128 - 10 - 125, 1
-    );
     initGDT();                   // 初始化全局描述符表
-    printk("  %s [%s]\n", OSNAME, OSVERSION);  // 打印版权信息
-    printk("  Copyright (c) %s Project", OSNAME);
+    printk("%s [%s]\n", OSNAME, OSVERSION);  // 打印版权信息
+    printk("Copyright (c) 2025 %s Project", OSNAME);
     
     halt();                      // 停止执行
 }

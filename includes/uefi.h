@@ -233,7 +233,12 @@ struct EFI_BOOT_SERVICES {
     UINTN _buf5[9];
 
     // Image Services
-    UINTN _buf6[5];
+    UINTN _buf6[4];
+
+    EFI_STATUS (*ExitBootServices)(
+        EFI_HANDLE  ImageHandle,
+        UINTN       MapKey
+    );
 
     // Miscellaneous Services
     UINTN _buf7[2];

@@ -1,6 +1,14 @@
 *.o
+
 *.elf
+
 *.efi
+
 bin
+
 esp
+
 .vscode
+
+materials
+.VSCodeCounter
