@@ -29,7 +29,10 @@
 #include <std/string.h>
 
 #define OSNAME "MythOS"
+#define NICKNAME "Phoenix"
 #define OSVERSION "v0.3.1"
+#define CORENAME "FlameCore"
+#define COREVERSION "v0.2.1"
 
 Console *console;
 int printk(const char *fmt, ...)
@@ -50,7 +53,7 @@ int printk(const char *fmt, ...)
  * @param fbc 指向帧缓冲区配置的指针
  * @param BootConfig 引导配置结构体指针
  */
-void kernelMain(const struct FrameBufferConfig *fbc, BOOT_CONFIG *BootConfig)
+void FlameCoreMain(const struct FrameBufferConfig *fbc, BOOT_CONFIG *BootConfig)
 {
     disableInterrupts();    // 禁用中断
     clearScreen(fbc);       // 清除屏幕
@@ -72,7 +75,7 @@ void kernelMain(const struct FrameBufferConfig *fbc, BOOT_CONFIG *BootConfig)
         fbc->vertical_resolution - 128 -10, 1
     );
     initGDT();                   // 初始化全局描述符表
-    printk("%s [%s]\n", OSNAME, OSVERSION);  // 打印版权信息
+    printk("%s %s [%s] %s [%s]\n", OSNAME, NICKNAME, OSVERSION, CORENAME, COREVERSION);  // 打印版权信息
     printk("Copyright (c) 2025 %s Project", OSNAME);
     
     halt();                      // 停止执行

@@ -27,37 +27,37 @@ LD_FLAGS = -e $(LD_ENTRY) -z norelro -Ttext-segment 0x100000 --static -o
 QEMU_FLAGS = -bios ./OVMF.fd -net none -drive file=fat:rw:$(ESP),index=0,format=vvfat
 
 ENTRY_POINT = entryPoint
-LD_ENTRY = kernelMain
+LD_ENTRY = FlameCoreMain
 
 BOOT_LOADER = .\BootLoader\BootLoader.c
 BOOT_LOADER_EFI = .\bin\BootLoader.efi
-KERNEL = .\kernel\main.c
-KERNEL_O = .\kernel\main.o
-KERNEL_ELF = .\bin\kernel.elf
-GRAPHICS = .\kernel\gui\graphic\graphics.c
-GRAPHICS_O = .\kernel\gui\graphic\graphics.o
-FONT = .\kernel\gui\graphic\font.c
-FONT_O = .\kernel\gui\graphic\font.o
-COLOR = .\kernel\gui\graphic\color.c
-COLOR_O = .\kernel\gui\graphic\color.o
-BMP = .\kernel\gui\view\bmp.c
-BMP_O = .\kernel\gui\view\bmp.o
-CONSOLE = .\kernel\gui\console\console.c
-CONSOLE_O = .\kernel\gui\console\console.o
-STRING = .\kernel\std\string.c
-STRING_O = .\kernel\std\string.o
-STDLIB = .\kernel\std\stdlib.c
-STDLIB_O = .\kernel\std\stdlib.o
-STDIO = .\kernel\std\stdio.c
-STDIO_O = .\kernel\std\stdio.o
-IO = .\kernel\asm\hal\io.c
-IO_O = .\kernel\asm\hal\io.o
-GDT = .\kernel\asm\gdt\gdt.c
-GDT_O = .\kernel\asm\gdt\gdt.o
+FLAMECORE = .\FlameCore\main.c
+FLAMECORE_O = .\FlameCore\main.o
+FLAMECORE_ELF = .\bin\FlameCore.elf
+GRAPHICS = .\FlameCore\gui\graphic\graphics.c
+GRAPHICS_O = .\FlameCore\gui\graphic\graphics.o
+FONT = .\FlameCore\gui\graphic\font.c
+FONT_O = .\FlameCore\gui\graphic\font.o
+COLOR = .\FlameCore\gui\graphic\color.c
+COLOR_O = .\FlameCore\gui\graphic\color.o
+BMP = .\FlameCore\gui\view\bmp.c
+BMP_O = .\FlameCore\gui\view\bmp.o
+CONSOLE = .\FlameCore\gui\console\console.c
+CONSOLE_O = .\FlameCore\gui\console\console.o
+STRING = .\FlameCore\std\string.c
+STRING_O = .\FlameCore\std\string.o
+STDLIB = .\FlameCore\std\stdlib.c
+STDLIB_O = .\FlameCore\std\stdlib.o
+STDIO = .\FlameCore\std\stdio.c
+STDIO_O = .\FlameCore\std\stdio.o
+IO = .\FlameCore\asm\hal\io.c
+IO_O = .\FlameCore\asm\hal\io.o
+GDT = .\FlameCore\asm\gdt\gdt.c
+GDT_O = .\FlameCore\asm\gdt\gdt.o
 
 ESP = .\esp
 ESP_BOOTLOADER = $(ESP)\EFI\BOOT\BOOTX64.EFI
-ESP_KERNEL = $(ESP)\kernel.elf
+ESP_FLAMECORE = $(ESP)\FlameCore.elf
 
 all: info clean objects efi link
 
@@ -79,8 +79,8 @@ efi:
 	@echo Done.
 
 objects:
-	@echo Compiling kernel...
-	@$(ELF_GCC) $(KERNEL) $(ELF_GCC_FLAGS) $(KERNEL_O)
+	@echo Compiling FLameCore...
+	@$(ELF_GCC) $(FLAMECORE) $(ELF_GCC_FLAGS) $(FLAMECORE_O)
 	@echo Done.
 	@echo Compiling font...
 	@$(ELF_GCC) $(FONT) $(ELF_GCC_FLAGS) $(FONT_O)
@@ -115,11 +115,11 @@ objects:
 
 link:
 	@echo Linking...
-	@$(LD) $(LD_FLAGS) $(KERNEL_ELF) $(KERNEL_O) $(GRAPHICS_O) $(FONT_O) $(COLOR_O) $(BMP_O) $(CONSOLE_O) $(STRING_O) $(STDLIB_O) $(STDIO_O) $(IO_O) $(GDT_O)
+	@$(LD) $(LD_FLAGS) $(FLAMECORE_ELF) $(FLAMECORE_O) $(GRAPHICS_O) $(FONT_O) $(COLOR_O) $(BMP_O) $(CONSOLE_O) $(STRING_O) $(STDLIB_O) $(STDIO_O) $(IO_O) $(GDT_O)
 	@echo Done.
 	@echo Copying BootLoader and kernel...
-	@copy .\bin\BootLoader.efi .\esp\EFI\BOOT\bootx64.efi
-	@copy .\bin\kernel.elf .\esp\kernel.elf
+	@copy .\bin\BootLoader.efi ESP_BOOTLOADER
+	@copy .\bin\FlameCore.elf ESP_FLAMECORE
 	@del .\\bin
 	@echo Done.
 
