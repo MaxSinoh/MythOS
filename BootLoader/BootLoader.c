@@ -363,7 +363,7 @@ EFI_STATUS entryPoint(EFI_HANDLE ImageHandle, struct EFI_SYSTEM_TABLE *SystemTab
         while (1);
     }
     // 打开内核文件
-    status = root->Open(root, &kernel_file, L"\\kernel.elf", EFI_FILE_MODE_READ, 0);
+    status = root->Open(root, &kernel_file, L"\\FlameCore.elf", EFI_FILE_MODE_READ, 0);
     if (EFI_ERROR(status)) {
         puts(L"FAILED: error while opening kernel file");
 

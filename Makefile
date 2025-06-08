@@ -118,8 +118,8 @@ link:
 	@$(LD) $(LD_FLAGS) $(FLAMECORE_ELF) $(FLAMECORE_O) $(GRAPHICS_O) $(FONT_O) $(COLOR_O) $(BMP_O) $(CONSOLE_O) $(STRING_O) $(STDLIB_O) $(STDIO_O) $(IO_O) $(GDT_O)
 	@echo Done.
 	@echo Copying BootLoader and kernel...
-	@copy .\bin\BootLoader.efi ESP_BOOTLOADER
-	@copy .\bin\FlameCore.elf ESP_FLAMECORE
+	@copy .\bin\BootLoader.efi $(ESP_BOOTLOADER)
+	@copy .\bin\FlameCore.elf $(ESP_FLAMECORE)
 	@del .\\bin
 	@echo Done.
 
