@@ -1,7 +1,8 @@
 # MythOS  
 [简体中文](docs/README_ZH.md)  
 
-<br><img src="./materials/logo.png" width="64" height="64" alt="MythOS">
+<br><img src="./docs/logo.png" width="64" height="64" alt="MythOS">
+
 - A modern operating system with x86-64 architecture based on UEFI.
 - Copyright (c) 2025 MythOS Project.
 - All rights reserved.
