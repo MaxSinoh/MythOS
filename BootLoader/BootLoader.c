@@ -18,16 +18,15 @@
 #include <uefi.h>
 #include <fbc.h>
 
-// 定义EFI系统表指针
+// 定义EFI系统表、引导服务和运行时服务结构体指针
 struct EFI_SYSTEM_TABLE *ST;
-// 定义EFI启动服务指针
 struct EFI_BOOT_SERVICES *BS;
-// 定义EFI图形输出协议指针
+EFI_RUNTIME_SERVICES *RS;
+// 定义EFI图形输出协议、简单文件系统协议和加载的镜像协议结构体指针
 struct EFI_GRAPHICS_OUTPUT_PROTOCOL *GOP;
-// 定义EFI简单文件系统协议指针
 struct EFI_SIMPLE_FILE_SYSTEM_PROTOCOL *SFSP;
-// 定义EFI加载的镜像协议指针
 struct EFI_LOADED_IMAGE_PROTOCOL *LIP;
+
 // 定义EFI句柄
 EFI_HANDLE IM;
 
@@ -338,6 +337,17 @@ EFI_STATUS GetMMP(MEMORY_MAP *MemoryMap) {
     return GetMemoryMapStatus;
 }
 
+// 退出引导服务
+EFI_STATUS exitBootServices(EFI_HANDLE image_handle, MEMORY_MAP *memory_map) {
+    EFI_STATUS status = BS->ExitBootServices(image_handle, memory_map->MapKey);
+    if (status != EFI_SUCCESS) {
+        return status;
+    }
+    // 释放内存映射缓冲区
+    free(memory_map->Buffer);
+    return EFI_SUCCESS;
+}
+
 /**
  * @brief 程序的入口点函数
  * 这个函数是EFI应用程序的入口点，负责初始化EFI环境，加载内核文件，设置帧缓冲区配置，并跳转到内核入口点执行。
@@ -423,5 +433,14 @@ EFI_STATUS entryPoint(EFI_HANDLE ImageHandle, struct EFI_SYSTEM_TABLE *SystemTab
     Kernel kernel = (Kernel) entry_addr;
     // 启动内核
     kernel(&config, (BOOT_CONFIG *) &BootConfig);
+    // 退出引导服务
+    exitBootServices(ImageHandle, &BootConfig.MemoryMap);
+    struct EFI_TIME time;
+    status = ST->RuntimeServices->EFI_GET_TIME(&time, NULL);
+    if (status == EFI_SUCCESS) {
+        puts(L"SUCCESS: kernel loaded and executed");
+    } else {
+        puts(L"FAILED: error while getting time");
+    }
     while (1);
 }

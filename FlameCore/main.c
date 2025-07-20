@@ -29,7 +29,7 @@
 #include <std/string.h>
 
 #define OSNAME "MythOS"
-#define OSVERSION "0.3.1"
+#define OSVERSION "0.3.2"
 #define CORENAME "FlameCore"
 #define COREVERSION "0.2.1"
 

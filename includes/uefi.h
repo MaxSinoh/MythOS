@@ -259,6 +259,94 @@ struct EFI_BOOT_SERVICES {
     UINTN _buf12[3];
 };
 
+// EFI 时间结构体
+struct EFI_TIME
+{
+    UINT16 Year;       // 年 (1900-9999)
+    UINT8  Month;      // 月 (1-12)
+    UINT8  Day;        // 日 (1-31)
+    UINT8  Hour;       // 时 (0-23)
+    UINT8  Minute;     // 分 (0-59)
+    UINT8  Second;     // 秒 (0-59)
+    UINT8  Pad1;
+    UINT32 Nanosecond; // 纳秒 (0-999,999,999)
+    UINT16 TimeZone;   // 时区 (-1440 到 1440 或 2047 为无时区)
+    UINT8  Daylight;   // 夏令时标志
+    UINT8  Pad2;
+};
+
+// EFI 时间属性结构体
+struct EFI_TIME_CAPABILITIES
+{
+    UINT32 Resolution;      // 时钟分辨率 (秒的分数)
+    UINT32 Accuracy;        // 时钟精度 (±百万分之一秒)
+    UINT8 SetsToZero;     // 时钟是否可设置为0
+};
+
+typedef enum {
+    EfiResetCold,               // 冷重启
+    EfiResetWarm,               // 热重启
+    EfiResetShutdown,           // 关机
+    EfiResetPlatformSpecific    // 平台特定重置
+} EFI_RESET_TYPE;
+
+// EFI 运行时服务结构体
+typedef struct {
+    UINT64                  Hdr;                    // 表头部
+    EFI_STATUS (*EFI_GET_TIME) (
+        struct EFI_TIME                *Time,
+        struct EFI_TIME_CAPABILITIES   *Capabilities
+    );
+    EFI_STATUS (*EFI_SET_TIME) (
+        struct EFI_TIME                *Time
+    );
+    EFI_STATUS (*EFI_GET_WAKEUP_TIME) (
+        UINT8                 *Enabled,
+        UINT8                 *Pending,
+        struct EFI_TIME         *Time
+    );
+    EFI_STATUS (*EFI_SET_WAKEUP_TIME) (
+        UINT8                 Enable,
+        struct EFI_TIME         *Time
+    );
+    EFI_STATUS (*EFI_SET_VARIABLE) (
+        CHAR16                  *VariableName,
+        struct EFI_GUID         *VendorGuid,
+        UINT32                  Attributes,
+        UINTN                   DataSize,
+        VOID                    *Data
+    );
+    EFI_STATUS (*EFI_GET_VARIABLE) (
+        CHAR16                  *VariableName,
+        struct EFI_GUID         *VendorGuid,
+        UINT32                  *Attributes,
+        UINTN                   *DataSize,
+        VOID                    *Data
+    );
+    EFI_STATUS (*EFI_GET_NEXT_VARIABLE_NAME) (
+        UINTN                   *VariableNameSize,
+        CHAR16                  *VariableName,
+        struct EFI_GUID         *VendorGuid
+    );
+    EFI_STATUS (*EFI_QUERY_VARIABLE_INFO) (
+        UINT32                  Attributes,
+        UINT64                  *MaximumVariableStorageSize,
+        UINT64                  *RemainingVariableStorageSize,
+        UINT64                  *MaximumVariableSize
+    );
+    EFI_STATUS (*EFI_CONVERT_POINTER) (
+        UINTN                   DebugImage,
+        VOID                    **Address
+    );
+    EFI_STATUS (*EFI_RESET_SYSTEM) (
+        EFI_RESET_TYPE          ResetType,
+        EFI_STATUS              ResetStatus,
+        UINTN                   DataSize,
+        VOID                    *ResetData
+    );
+} EFI_RUNTIME_SERVICES;
+
+
 struct EFI_SYSTEM_TABLE {
     char _buf1[44];
     struct EFI_SIMPLE_TEXT_INPUT_PROTOCOL {
@@ -281,7 +369,8 @@ struct EFI_SYSTEM_TABLE {
             struct EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL *This
         );
     } *ConOut;
-    UINTN _buf3[3];
+    UINTN _buf3[2];
+    EFI_RUNTIME_SERVICES *RuntimeServices;
     struct EFI_BOOT_SERVICES *BootServices;
 };
 
@@ -401,5 +490,6 @@ extern struct EFI_GRAPHICS_OUTPUT_PROTOCOL      *GOP;
 extern struct EFI_LOADED_IMAGE_PROTOCOL         *LIP;
 extern struct EFI_SIMPLE_FILE_SYSTEM_PROTOCOL   *SFSP;
 extern struct EFI_BOOT_SERVICES                 *BS;
+extern EFI_RUNTIME_SERVICES                     *RS;
 
 #endif 
