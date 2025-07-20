@@ -29,10 +29,9 @@
 #include <std/string.h>
 
 #define OSNAME "MythOS"
-#define NICKNAME "Phoenix"
-#define OSVERSION "v0.3.1"
+#define OSVERSION "0.3.1"
 #define CORENAME "FlameCore"
-#define COREVERSION "v0.2.1"
+#define COREVERSION "0.2.1"
 
 Console *console;
 int printk(const char *fmt, ...)
@@ -75,7 +74,7 @@ void FlameCoreMain(const struct FrameBufferConfig *fbc, BOOT_CONFIG *BootConfig)
         fbc->vertical_resolution - 128 -10, 1
     );
     initGDT();                   // 初始化全局描述符表
-    printk("%s %s [%s] %s [%s]\n", OSNAME, NICKNAME, OSVERSION, CORENAME, COREVERSION);  // 打印版权信息
+    printk("%s [%s] %s [%s]\n", OSNAME, OSVERSION, CORENAME, COREVERSION);  // 打印版权信息
     printk("Copyright (c) 2025 %s Project", OSNAME);
     
     halt();                      // 停止执行
