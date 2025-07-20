@@ -41,4 +41,6 @@ typedef unsigned long int   size_t;
 
 typedef long long           int64_t;
 
+typedef unsigned char       bool;
+
 #endif

@@ -27,6 +27,7 @@
 #include <std/stdarg.h>
 #include <std/stdio.h>
 #include <std/string.h>
+#include <memory/physicalmem.h>
 
 #define OSNAME "MythOS"
 #define OSVERSION "0.3.2"
@@ -74,6 +75,17 @@ void FlameCoreMain(const struct FrameBufferConfig *fbc, BOOT_CONFIG *BootConfig)
         fbc->vertical_resolution - 128 -10, 1
     );
     initGDT();                   // 初始化全局描述符表
+
+    EFI_MEMORY_DESCRIPTOR* memory_map = &BootConfig->MemoryMap;
+    uint64_t map_size = &BootConfig->MemoryMap.MapSize;
+    uint64_t desc_size = &BootConfig->MemoryMap.DescriptorSize;
+    
+    // 初始化物理内存管理器
+    initPMM(memory_map, map_size, desc_size);
+    
+    // 分配一个物理页
+    uint64_t page_addr = pmmAllocatePage();
+
     printk("%s [%s] %s [%s]\n", OSNAME, OSVERSION, CORENAME, COREVERSION);  // 打印版权信息
     printk("Copyright (c) 2025 %s Project", OSNAME);
     

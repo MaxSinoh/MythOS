@@ -54,6 +54,10 @@ IO = .\FlameCore\asm\hal\io.c
 IO_O = .\FlameCore\asm\hal\io.o
 GDT = .\FlameCore\asm\gdt\gdt.c
 GDT_O = .\FlameCore\asm\gdt\gdt.o
+MEM = .\FlameCore\memory\memory.c
+MEM_O = .\FlameCore\memory\memory.o
+PMM = .\FlameCore\memory\physicalmem.c
+PMM_O = .\FlameCore\memory\physicalmem.o
 
 ESP = .\esp
 ESP_BOOTLOADER = $(ESP)\EFI\BOOT\BOOTX64.EFI
@@ -112,10 +116,13 @@ objects:
 	@echo Compiling gdt...
 	@$(ELF_GCC) $(GDT) $(ELF_GCC_FLAGS) $(GDT_O)
 	@echo Done.
+	@echo Compiling physical memory...
+	@$(ELF_GCC) $(PMM) $(ELF_GCC_FLAGS) $(PMM_O)
+	@echo Done.
 
 link:
 	@echo Linking...
-	@$(LD) $(LD_FLAGS) $(FLAMECORE_ELF) $(FLAMECORE_O) $(GRAPHICS_O) $(FONT_O) $(COLOR_O) $(BMP_O) $(CONSOLE_O) $(STRING_O) $(STDLIB_O) $(STDIO_O) $(IO_O) $(GDT_O)
+	@$(LD) $(LD_FLAGS) $(FLAMECORE_ELF) $(FLAMECORE_O) $(GRAPHICS_O) $(FONT_O) $(COLOR_O) $(BMP_O) $(CONSOLE_O) $(STRING_O) $(STDLIB_O) $(STDIO_O) $(IO_O) $(GDT_O) $(PMM_O)
 	@echo Done.
 	@echo Copying BootLoader and kernel...
 	@copy .\bin\BootLoader.efi $(ESP_BOOTLOADER)
