@@ -25,7 +25,7 @@ make all
 ```
 make run
 ```
-#### Then you can compile MythOS and run it in the QEMU.
+#### Then you can compile MythOS and run it in QEMU.
 ---
 ## Boot from real machine
 ### Tip: The premise is that you have a real machine and it supports UEFI.And you need an empty USB flash drive.
@@ -33,4 +33,7 @@ make run
 - Copy the 'EFI' folder and the 'kernel.elf' file in the 'esp' folder to the USB flash drive.
 - Boot your real machine with the USB flash drive.
 - Then you will see the screen of MythOS.
+---
+## Code Line
+- Total : 32 files, 6046 codes, 1164 comments, 275 blanks, all 7485 lines
 ---
