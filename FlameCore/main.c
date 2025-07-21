@@ -87,7 +87,7 @@ void FlameCoreMain(const struct FrameBufferConfig *fbc, BOOT_CONFIG *BootConfig)
     uint64_t page_addr = pmmAllocatePage();
     printk("Allocated page at: 0x%x\n", page_addr);
     printk("%s [%s] %s [%s]\n", OSNAME, OSVERSION, CORENAME, COREVERSION);  // 打印版权信息
-    // printk("Copyright (c) 2025 %s Project", OSNAME);
+    printk("Copyright (c) 2025 %s Project", OSNAME);
     
     halt();                      // 停止执行
 }
