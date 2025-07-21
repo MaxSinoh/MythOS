@@ -27,7 +27,7 @@
 #include <std/stdarg.h>
 #include <std/stdio.h>
 #include <std/string.h>
-#include <memory/physicalmem.h>
+#include <mem/pmm.h>
 
 #define OSNAME "MythOS"
 #define OSVERSION "0.3.3"

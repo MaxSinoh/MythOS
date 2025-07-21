@@ -14,8 +14,8 @@
 //              ALL RIGHTS RESERVED
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-#ifndef _PHYSICALMEM_H_
-#define _PHYSICALMEM_H_
+#ifndef _PMM_H_
+#define _PMM_H_
 
 #include <type.h>
 #include <uefi.h>

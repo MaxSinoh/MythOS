@@ -16,7 +16,7 @@
 
 #include <uefi.h>
 #include <type.h>
-#include <memory/physicalmem.h>
+#include <mem/pmm.h>
 #include <std/string.h>
 
 #define PAGE_SIZE 4096

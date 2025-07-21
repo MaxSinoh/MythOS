@@ -54,10 +54,8 @@ IO = .\FlameCore\asm\hal\io.c
 IO_O = .\FlameCore\asm\hal\io.o
 GDT = .\FlameCore\asm\gdt\gdt.c
 GDT_O = .\FlameCore\asm\gdt\gdt.o
-MEM = .\FlameCore\memory\memory.c
-MEM_O = .\FlameCore\memory\memory.o
-PMM = .\FlameCore\memory\physicalmem.c
-PMM_O = .\FlameCore\memory\physicalmem.o
+PMM = .\FlameCore\mem\pmm.c
+PMM_O = .\FlameCore\mem\pmm.o
 
 ESP = .\esp
 ESP_BOOTLOADER = $(ESP)\EFI\BOOT\BOOTX64.EFI
