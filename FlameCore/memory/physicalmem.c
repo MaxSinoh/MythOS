@@ -23,34 +23,6 @@
 
 PhysicalMemoryManager pmm;
 
-void initPMM(EFI_MEMORY_DESCRIPTOR* map, uint64_t map_size, uint64_t desc_size) {
-    // 计算可用物理内存总量
-    uint64_t memory_size = calculate_total_memory(map, map_size, desc_size);
-    pmm.total_pages = memory_size / PAGE_SIZE;
-    
-    // 分配位图内存（位图本身也需要物理页）
-    uint64_t bitmap_size = pmm.total_pages / 8 + 1;
-    uint64_t bitmap_pages = (bitmap_size + PAGE_SIZE - 1) / PAGE_SIZE;
-    
-    // 找到一个合适的位置存储位图
-    uint64_t bitmap_address = find_free_memory_region(map, map_size, desc_size, bitmap_pages);
-    pmm.bitmap = (uint64_t*)bitmap_address;
-    
-    // 初始化位图（标记所有页为已使用）
-    memset(pmm.bitmap, 0xFF, bitmap_size);
-    
-    // 遍历内存映射，标记可用内存为未使用
-    mark_usable_memory(map, map_size, desc_size);
-    
-    // 标记位图本身占用的页为已使用
-    mark_pages_used(bitmap_address / PAGE_SIZE, bitmap_pages);
-    
-    pmm.used_pages = 0;  // 重新计算已使用页数
-    for (uint64_t i = 0; i < pmm.total_pages; i++) {
-        if (is_page_used(i)) pmm.used_pages++;
-    }
-}
-
 uint64_t pmmAllocatePage() {
     // 查找空闲页
     for (uint64_t i = 0; i < pmm.total_pages; i++) {
@@ -85,23 +57,6 @@ uint64_t calculate_total_memory(EFI_MEMORY_DESCRIPTOR* map, uint64_t map_size, u
     }
     
     return total;
-}
-
-uint64_t find_free_memory_region(EFI_MEMORY_DESCRIPTOR* map, uint64_t map_size, uint64_t desc_size, uint64_t pages_needed) {
-    uint64_t entries = map_size / desc_size;
-    
-    for (uint64_t i = 0; i < entries; i++) {
-        EFI_MEMORY_DESCRIPTOR* desc = (EFI_MEMORY_DESCRIPTOR*)((uint8_t*)map + i * desc_size);
-        
-        // 寻找足够大的可用内存区域
-        if (desc->Type == EfiConventionalMemory && desc->NumberOfPages >= pages_needed) {
-            // 检查是否有足够的连续页
-            uint64_t addr = desc->PhysicalStart;
-            return addr;  // 返回第一个可用地址
-        }
-    }
-    
-    return 0;  // 未找到合适区域
 }
 
 void mark_usable_memory(EFI_MEMORY_DESCRIPTOR* map, uint64_t map_size, uint64_t desc_size) {
@@ -152,4 +107,56 @@ void mark_page_free(uint64_t page_index) {
     uint64_t bit_index = page_index % 8;
     
     pmm.bitmap[byte_index] &= ~(1ULL << bit_index);
+}
+
+// 修改 initPMM 函数中的内存映射参数传递错误
+void initPMM(EFI_MEMORY_DESCRIPTOR* map, uint64_t map_size, uint64_t desc_size) {
+    // 计算可用物理内存总量（修复：包含所有内存类型用于总页数计算）
+    uint64_t total_memory = 0;
+    uint64_t entries = map_size / desc_size;
+    for (uint64_t i = 0; i < entries; i++) {
+        EFI_MEMORY_DESCRIPTOR* desc = (EFI_MEMORY_DESCRIPTOR*)((uint8_t*)map + i * desc_size);
+        total_memory += desc->NumberOfPages * PAGE_SIZE;
+    }
+    pmm.total_pages = total_memory / PAGE_SIZE;
+    
+    // 分配位图内存
+    uint64_t bitmap_size = pmm.total_pages / 8 + 1;
+    uint64_t bitmap_pages = (bitmap_size + PAGE_SIZE - 1) / PAGE_SIZE;
+    
+    // 找到一个合适的位置存储位图（修复：检查返回值有效性）
+    uint64_t bitmap_address = find_free_memory_region(map, map_size, desc_size, bitmap_pages);
+    if (bitmap_address == 0) {
+        // 处理内存分配失败的情况
+        while (1); // 实际应用中应添加更合理的错误处理
+    }
+    pmm.bitmap = (uint64_t*)bitmap_address;
+    // 初始化位图（标记所有页为已使用）
+    memset(pmm.bitmap, 0xFF, bitmap_size);
+    // 遍历内存映射，标记可用内存为未使用
+    mark_usable_memory(map, map_size, desc_size);
+    // 标记位图本身占用的页为已使用
+    mark_pages_used(bitmap_address / PAGE_SIZE, bitmap_pages);
+    // 重新计算已使用页数
+    pmm.used_pages = 0;
+    for (uint64_t i = 0; i < pmm.total_pages; i++) {
+        if (is_page_used(i)) {
+            pmm.used_pages++;
+        }
+    }
+}
+
+uint64_t find_free_memory_region(EFI_MEMORY_DESCRIPTOR* map, uint64_t map_size, uint64_t desc_size, uint64_t pages_needed)
+{
+    uint64_t entries = map_size / desc_size;
+    for (uint64_t i = 0; i < entries; i++)
+    {
+        EFI_MEMORY_DESCRIPTOR* desc = (EFI_MEMORY_DESCRIPTOR*)((uint8_t*)map + i * desc_size);
+        // 寻找足够大的可用内存区域（修复：检查内存类型并确保连续）
+        if (desc->Type == EfiConventionalMemory && desc->NumberOfPages >= pages_needed)
+        {
+            return desc->PhysicalStart;
+        }
+    }
+    return 0; // 未找到合适区域
 }

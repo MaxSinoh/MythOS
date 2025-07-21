@@ -34,5 +34,7 @@ bool is_page_used(uint64_t page_index);
 void mark_page_used(uint64_t page_index);
 void mark_pages_used(uint64_t start_page, uint64_t page_count);
 void mark_page_free(uint64_t page_index);
+void pmmFreePage(uint64_t page_address);
+uint64_t pmmAllocatePage();
 
 #endif
