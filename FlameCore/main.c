@@ -71,8 +71,8 @@ void FlameCoreMain(const struct FrameBufferConfig *fbc, BOOT_CONFIG *BootConfig)
     drawBMP(                     // 绘制logo图片到帧缓冲区
         (struct FrameBufferConfig *)fbc,
         (BMP_IMAGE_HEADER *)logo,
-        fbc->horizontal_resolution - 128 - 20,
-        fbc->vertical_resolution - 128 -10, 1
+        fbc->horizontal_resolution - 128 - 30,
+        fbc->vertical_resolution - 128 -20, 1
     );
     initGDT();                   // 初始化全局描述符表
 
