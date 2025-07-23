@@ -28,11 +28,12 @@
 #include <std/stdio.h>
 #include <std/string.h>
 #include <mem/pmm.h>
+#include <mem/vmm.h>
 
 #define OSNAME "MythOS"
 #define OSVERSION "0.3.3"
 #define CORENAME "FlameCore"
-#define COREVERSION "0.2.2"
+#define COREVERSION "0.1.2"
 
 Console *console;
 int printk(const char *fmt, ...)
@@ -79,13 +80,14 @@ void FlameCoreMain(const struct FrameBufferConfig *fbc, BOOT_CONFIG *BootConfig)
     EFI_MEMORY_DESCRIPTOR* memory_map = BootConfig->MemoryMap.Buffer;
     uint64_t map_size = BootConfig->MemoryMap.MapSize;
     uint64_t desc_size = BootConfig->MemoryMap.DescriptorSize;
-    
     // 初始化物理内存管理器
     initPMM(memory_map, map_size, desc_size);
-    
-    // 分配一个物理页
-    uint64_t page_addr = pmmAllocatePage();
-    printk("Allocated page at: 0x%x\n", page_addr);
+    // 初始化虚拟内存管理器（开启分页）
+    initVMM();
+    void* phys_page = (void*)pmmAllocatePage();
+    void* virt_page = (void*)0xFFFF800000001000;
+    map(phys_page, virt_page, 0x03);
+    printk("Mapped virtual: %x -> physical: %x\n", (uint64_t)virt_page, (uint64_t)vtop(virt_page));
     printk("%s [%s] %s [%s]\n", OSNAME, OSVERSION, CORENAME, COREVERSION);  // 打印版权信息
     printk("Copyright (c) 2025 %s Project", OSNAME);
     
