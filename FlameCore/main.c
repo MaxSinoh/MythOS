@@ -56,40 +56,24 @@ int printk(const char *fmt, ...)
  */
 void FlameCoreMain(const struct FrameBufferConfig *fbc, BOOT_CONFIG *BootConfig)
 {
-    disableInterrupts();    // 禁用中断
-    clearScreen(fbc);       // 清除屏幕
-
-    console->config = fbc;       // 设置控制台帧缓冲区配置
-    console->fg_color = black;   // 设置控制台前景色为黑色
-    console->bg_color = white;   // 设置控制台背景色为白色
-    memset(                      // 将控制台缓冲区内存清零
-        console->buffer, 0,
-        sizeof(console->buffer)
-    );    
-    console->cursor_row = 0;     // 设置控制台光标行位置为0
-    console->cursor_column = 0;  // 设置控制台光标列位置为0
-
-    drawBMP(                     // 绘制logo图片到帧缓冲区
-        (struct FrameBufferConfig *)fbc,
-        (BMP_IMAGE_HEADER *)logo,
-        fbc->horizontal_resolution - 128 - 30,
-        fbc->vertical_resolution - 128 -20, 1
-    );
-    initGDT();                   // 初始化全局描述符表
-
-    EFI_MEMORY_DESCRIPTOR* memory_map = BootConfig->MemoryMap.Buffer;
-    uint64_t map_size = BootConfig->MemoryMap.MapSize;
-    uint64_t desc_size = BootConfig->MemoryMap.DescriptorSize;
-    // 初始化物理内存管理器
-    initPMM(memory_map, map_size, desc_size);
-    // 初始化虚拟内存管理器（开启分页）
-    initVMM();
-    void* phys_page = (void*)pmmAllocatePage();
-    void* virt_page = (void*)0xFFFF800000001000;
-    map(phys_page, virt_page, 0x03);
+    disableInterrupts();
+    clearScreen(fbc);
+    initPMM(BootConfig->MemoryMap.Buffer, BootConfig->MemoryMap.MapSize, BootConfig->MemoryMap.DescriptorSize);
+    initVMM(); // 开启分页
+    void* virt_page = (void*)0x10000;
+    console = (Console*)pmmAllocatePage(); // 从堆分配控制台结构
+    console->config = fbc;
+    console->fg_color = black;
+    console->bg_color = white;
+    memset(console->buffer, 0, sizeof(console->buffer));
+    console->cursor_row = 0;
+    console->cursor_column = 0;
+    drawBMP((struct FrameBufferConfig *)fbc, (BMP_IMAGE_HEADER *)logo, 
+            fbc->horizontal_resolution - 128 - 30,
+            fbc->vertical_resolution - 128 - 20, 1);
+    initGDT();
     printk("Mapped virtual: %x -> physical: %x\n", (uint64_t)virt_page, (uint64_t)vtop(virt_page));
-    printk("%s [%s] %s [%s]\n", OSNAME, OSVERSION, CORENAME, COREVERSION);  // 打印版权信息
+    printk("%s [%s] %s [%s]\n", OSNAME, OSVERSION, CORENAME, COREVERSION);
     printk("Copyright (c) 2025 %s Project", OSNAME);
-    
-    halt();                      // 停止执行
+    halt();
 }
