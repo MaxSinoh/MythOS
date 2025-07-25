@@ -18,6 +18,8 @@
 #include <type.h>
 #include <mem/pmm.h>
 #include <std/string.h>
+#include <gui/printk.h>
+#include <asm/hal/io.h>
 
 #define PAGE_SIZE 4096
 
@@ -113,10 +115,14 @@ void initPMM(EFI_MEMORY_DESCRIPTOR* map, uint64_t map_size, uint64_t desc_size) 
     }
     pmm.total_pages = total_memory / PAGE_SIZE;
     // 分配位图内存
-    uint64_t bitmap_size = pmm.total_pages / 8 + 1;
+    uint64_t bitmap_size = (pmm.total_pages + 7) / 8; // 每8位表示一个页的状态
     uint64_t bitmap_pages = (bitmap_size + PAGE_SIZE - 1) / PAGE_SIZE;
     // 找到一个合适的位置存储位图（修复：检查返回值有效性）
     uint64_t bitmap_address = find_free_memory_region(map, map_size, desc_size, bitmap_pages);
+    if (!bitmap_address) {
+        printk("PMM: No memory for bitmap!\n");
+        halt();
+    }
     if (bitmap_address == 0) {
         return; // 无法分配位图内存，退出初始化过程
     }

@@ -58,10 +58,6 @@ void FlameCoreMain(const struct FrameBufferConfig *fbc, BOOT_CONFIG *BootConfig)
 {
     disableInterrupts();
     clearScreen(fbc);
-    initPMM(BootConfig->MemoryMap.Buffer, BootConfig->MemoryMap.MapSize, BootConfig->MemoryMap.DescriptorSize);
-    initVMM(); // 开启分页
-    void* virt_page = (void*)0x10000;
-    console = (Console*)pmmAllocatePage(); // 从堆分配控制台结构
     console->config = fbc;
     console->fg_color = black;
     console->bg_color = white;
@@ -72,7 +68,10 @@ void FlameCoreMain(const struct FrameBufferConfig *fbc, BOOT_CONFIG *BootConfig)
             fbc->horizontal_resolution - 128 - 30,
             fbc->vertical_resolution - 128 - 20, 1);
     initGDT();
-    printk("Mapped virtual: %x -> physical: %x\n", (uint64_t)virt_page, (uint64_t)vtop(virt_page));
+    //initVMM(); // 开启分页
+    initPMM(BootConfig->MemoryMap.Buffer, BootConfig->MemoryMap.MapSize, BootConfig->MemoryMap.DescriptorSize);
+    uint64_t page_addr = pmmAllocatePage();
+    printk("Allocated page at: 0x%x\n", page_addr);
     printk("%s [%s] %s [%s]\n", OSNAME, OSVERSION, CORENAME, COREVERSION);
     printk("Copyright (c) 2025 %s Project", OSNAME);
     halt();

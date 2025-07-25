@@ -49,7 +49,7 @@ static PageTable* createPageTable()
     void* virt_addr = vtop(phys_addr);
     if (!virt_addr) {
         // 如果没有映射，创建临时映射
-        virt_addr = (void*)0xFFFF800000000000; // 使用临时虚拟地址
+        virt_addr = (void*)(0xFFFFFE0000000000 + ((uintptr_t)phys_addr & 0x1FFFFF)); // 使用临时虚拟地址
         if (map(virt_addr, phys_addr, 0x03) != 0) {
             pmmFreePage((uint64_t)phys_addr);
             return NULL;
