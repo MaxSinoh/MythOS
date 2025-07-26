@@ -350,13 +350,13 @@ EFI_STATUS GetMMP(MEMORY_MAP *MemoryMap) {
 }
 
 // 退出引导服务
-EFI_STATUS exitBootServices(EFI_HANDLE image_handle, MEMORY_MAP *memory_map) {
-    EFI_STATUS status = BS->ExitBootServices(image_handle, memory_map->MapKey);
-    if (status != EFI_SUCCESS) {
-        return status;
+EFI_STATUS exitBootServices(MEMORY_MAP MemoryMap) {
+    EFI_STATUS status;
+    status = BS->ExitBootServices(IM, MemoryMap.MapKey);
+    if (EFI_ERROR(status)) {
+        puts(L"FAILED: error while exiting boot services");
+        while (1);
     }
-    // 释放内存映射缓冲区
-    free(memory_map->Buffer);
     return EFI_SUCCESS;
 }
 
@@ -455,7 +455,7 @@ EFI_STATUS entryPoint(EFI_HANDLE ImageHandle, struct EFI_SYSTEM_TABLE *SystemTab
     typedef void (* __attribute__((sysv_abi)) Kernel)(const struct FrameBufferConfig *, const BOOT_CONFIG *);
     Kernel kernel = (Kernel) entry_addr;
     // 退出引导服务
-    status = exitBootServices(ImageHandle, &BootConfig.MemoryMap);
+    status = exitBootServices(BootConfig.MemoryMap);
     if (EFI_ERROR(status)) {
         puts(L"FAILED: error while exiting boot services");
         while (1);
