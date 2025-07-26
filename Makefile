@@ -24,7 +24,7 @@ QEMU = qemu-system-x86_64
 GCC_FLAGS = -I includes -nostdlib -nostdinc -fno-builtin -Wl,--subsystem,10 -e $(ENTRY_POINT) -o
 ELF_GCC_FLAGS = -I includes -O2 -Wall -g -ffreestanding -fno-exceptions -std=c99 -c -o
 LD_FLAGS = -e $(LD_ENTRY) -z norelro -Ttext-segment 0x100000 --static -o
-QEMU_FLAGS = -bios ./OVMF.fd -net none -drive file=fat:rw:$(ESP),index=0,format=vvfat -serial file:serial.log
+QEMU_FLAGS = -bios ./OVMF.fd -net none -drive file=fat:rw:$(ESP),index=0,format=vvfat -serial file:serial.log -S -s
 
 ENTRY_POINT = entryPoint
 LD_ENTRY = FlameCoreMain
