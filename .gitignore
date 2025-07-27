@@ -20,8 +20,10 @@
 
 *.efi
 
-bin
-esp
+serial.log
+
+bin/
+esp/
 
 .vscode
 
