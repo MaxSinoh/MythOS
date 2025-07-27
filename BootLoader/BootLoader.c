@@ -351,13 +351,12 @@ EFI_STATUS GetMMP(MEMORY_MAP *MemoryMap) {
 
 // 退出引导服务
 EFI_STATUS exitBootServices(MEMORY_MAP MemoryMap) {
-    EFI_STATUS status;
-    status = BS->ExitBootServices(IM, MemoryMap.MapKey);
+    EFI_STATUS status = BS->ExitBootServices(IM, MemoryMap.MapKey);
     if (EFI_ERROR(status)) {
         puts(L"FAILED: error while exiting boot services");
         while (1);
     }
-    return EFI_SUCCESS;
+    return status;
 }
 
 /**
