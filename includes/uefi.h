@@ -214,7 +214,12 @@ struct EFI_BOOT_SERVICES {
     UINTN _buf5[9];
 
     // Image Services
-    UINTN _buf6[5];
+    UINTN _buf6[4];
+
+    EFI_STATUS (*ExitBootServices)(
+        EFI_HANDLE  ImageHandle,
+        UINTN       MapKey
+    );
 
     // Miscellaneous Services
     UINTN _buf7[2];
@@ -251,12 +256,7 @@ struct EFI_BOOT_SERVICES {
     UINTN _buf11;
 
     // Miscellaneous Services
-    UINTN _buf12[1];
-    EFI_STATUS (*ExitBootServices)(
-        EFI_HANDLE  ImageHandle,
-        UINTN       MapKey
-    );
-    UINTN _buf13[1];
+    UINTN _buf12[3];
 };
 
 // EFI 时间结构体

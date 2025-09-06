@@ -30,7 +30,7 @@ make run
 ## Boot from real machine
 ### Tip: The premise is that you have a real machine and it supports UEFI.And you need an empty USB flash drive.
 - Format the USB flash drive to FAT32.
-- Copy the 'EFI' folder and the 'kernel.elf' file in the 'esp' folder to the USB flash drive.
+- Copy the 'EFI' folder and the 'FlameCore.elf' file in the 'esp' folder to the USB flash drive.
 - Boot your real machine with the USB flash drive.
 - Then you will see the screen of MythOS.
 ---

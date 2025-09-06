@@ -298,15 +298,6 @@ void efi_init(EFI_HANDLE ImageHandle, struct EFI_SYSTEM_TABLE *SystemTable)
     BS->OpenProtocol(ImageHandle, &lip_guid, (void **) &LIP, ImageHandle, NULL, EFI_OPEN_PROTOCOL_GET_PROTOCOL); 
     // 通过LIP协议的设备句柄打开SFSP协议
     BS->OpenProtocol(LIP->DeviceHandle, &sfsp_guid, (void **) &SFSP, ImageHandle, NULL, EFI_OPEN_PROTOCOL_BY_HANDLE_PROTOCOL);
-        EFI_STATUS status = BS->AllocatePool(
-        EfiRuntimeServicesData, 
-        GOP->Mode->FrameBufferSize, 
-        (VOID**)&GOP->Mode->FrameBufferBase
-    );
-    if (EFI_ERROR(status)) {
-        puts(L"ERROR: Failed to protect FrameBuffer");
-        while(1);
-    }
 }
 
 /**
@@ -343,20 +334,18 @@ EFI_STATUS GetMMP(MEMORY_MAP *MemoryMap) {
     if (!MemoryMap->Buffer) {
         GetMemoryMapStatus = EFI_OUT_OF_RESOURCES;
     }
-    void *kernel_mmap_addr = (void*)0x100000; // 内核已知地址
-    memcpy(kernel_mmap_addr, MemoryMap->Buffer, MemoryMap->MapSize);
-    MemoryMap->Buffer = kernel_mmap_addr;
     return GetMemoryMapStatus;
 }
 
 // 退出引导服务
-EFI_STATUS exitBootServices(MEMORY_MAP MemoryMap) {
-    EFI_STATUS status = BS->ExitBootServices(IM, MemoryMap.MapKey);
-    if (EFI_ERROR(status)) {
-        puts(L"FAILED: error while exiting boot services");
-        while (1);
+EFI_STATUS exitBootServices(EFI_HANDLE image_handle, MEMORY_MAP *memory_map) {
+    EFI_STATUS status = BS->ExitBootServices(image_handle, memory_map->MapKey);
+    if (status != EFI_SUCCESS) {
+        return status;
     }
-    return status;
+    // 释放内存映射缓冲区
+    free(memory_map->Buffer);
+    return EFI_SUCCESS;
 }
 
 /**
@@ -398,17 +387,6 @@ EFI_STATUS entryPoint(EFI_HANDLE ImageHandle, struct EFI_SYSTEM_TABLE *SystemTab
     }
     // 解析elf文件头部并计算内核加载地址范围
     Elf64_Ehdr *ehdr = (Elf64_Ehdr *) kernel_buffer;
-    if (ehdr->e_ident[0] != 0x7F || 
-        ehdr->e_ident[1] != 'E' || 
-        ehdr->e_ident[2] != 'L' || 
-        ehdr->e_ident[3] != 'F') {
-        puts(L"ERROR: Invalid ELF magic number");
-        while(1);
-    }
-    if (ehdr->e_machine != 62) {
-        puts(L"ERROR: Not x86-64 ELF");
-        while(1);
-    }
     UINT64 kernel_first_addr, kernel_last_addr;
     CalcLoadAddressRange(ehdr, &kernel_first_addr, &kernel_last_addr);
     // 在指定地址范围分配内存
@@ -453,13 +431,16 @@ EFI_STATUS entryPoint(EFI_HANDLE ImageHandle, struct EFI_SYSTEM_TABLE *SystemTab
     // 定义内核函数类型
     typedef void (* __attribute__((sysv_abi)) Kernel)(const struct FrameBufferConfig *, const BOOT_CONFIG *);
     Kernel kernel = (Kernel) entry_addr;
-    // 退出引导服务
-    status = exitBootServices(BootConfig.MemoryMap);
-    if (EFI_ERROR(status)) {
-        puts(L"FAILED: error while exiting boot services");
-        while (1);
-    }
     // 启动内核
     kernel(&config, (BOOT_CONFIG *) &BootConfig);
+    // 退出引导服务
+    exitBootServices(ImageHandle, &BootConfig.MemoryMap);
+    struct EFI_TIME time;
+    status = ST->RuntimeServices->EFI_GET_TIME(&time, NULL);
+    if (status == EFI_SUCCESS) {
+        puts(L"SUCCESS: kernel loaded and executed");
+    } else {
+        puts(L"FAILED: error while getting time");
+    }
     while (1);
 }

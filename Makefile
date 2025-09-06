@@ -24,7 +24,7 @@ QEMU = qemu-system-x86_64
 GCC_FLAGS = -I includes -nostdlib -nostdinc -fno-builtin -Wl,--subsystem,10 -e $(ENTRY_POINT) -o
 ELF_GCC_FLAGS = -I includes -O2 -Wall -g -ffreestanding -fno-exceptions -std=c99 -c -o
 LD_FLAGS = -e $(LD_ENTRY) -z norelro -Ttext-segment 0x100000 --static -o
-QEMU_FLAGS = -bios ./OVMF.fd -net none -drive file=fat:rw:$(ESP),index=0,format=vvfat -serial file:serial.log -S -s
+QEMU_FLAGS = -bios ./OVMF.fd -net none -drive file=fat:rw:$(ESP),index=0,format=vvfat
 
 ENTRY_POINT = entryPoint
 LD_ENTRY = FlameCoreMain
@@ -56,8 +56,6 @@ GDT = .\FlameCore\asm\gdt\gdt.c
 GDT_O = .\FlameCore\asm\gdt\gdt.o
 PMM = .\FlameCore\mem\pmm.c
 PMM_O = .\FlameCore\mem\pmm.o
-VMM = .\FlameCore\mem\vmm.c
-VMM_O = .\FlameCore\mem\vmm.o
 
 ESP = .\esp
 ESP_BOOTLOADER = $(ESP)\EFI\BOOT\BOOTX64.EFI
@@ -119,14 +117,10 @@ objects:
 	@echo Compiling physical memory...
 	@$(ELF_GCC) $(PMM) $(ELF_GCC_FLAGS) $(PMM_O)
 	@echo Done.
-	@echo Compiling virtual memory...
-	@$(ELF_GCC) $(VMM) $(ELF_GCC_FLAGS) $(VMM_O)
-	@echo Done.
 
 link:
 	@echo Linking...
-	@$(LD) $(LD_FLAGS) $(FLAMECORE_ELF) $(FLAMECORE_O) $(GRAPHICS_O) $(FONT_O) $(COLOR_O) \
-		$(BMP_O) $(CONSOLE_O) $(STRING_O) $(STDLIB_O) $(STDIO_O) $(IO_O) $(GDT_O) $(PMM_O) $(VMM_O)
+	@$(LD) $(LD_FLAGS) $(FLAMECORE_ELF) $(FLAMECORE_O) $(GRAPHICS_O) $(FONT_O) $(COLOR_O) $(BMP_O) $(CONSOLE_O) $(STRING_O) $(STDLIB_O) $(STDIO_O) $(IO_O) $(GDT_O) $(PMM_O)
 	@echo Done.
 	@echo Copying BootLoader and kernel...
 	@copy .\bin\BootLoader.efi $(ESP_BOOTLOADER)
