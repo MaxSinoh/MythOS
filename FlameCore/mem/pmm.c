@@ -1,3 +1,19 @@
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//           /======================\\`
+//           | /==================\`||;
+//           | |        ||        |;||;
+//           | |   ,,   ||   ,,   |;||;
+//           | |   ||   ||   ||   |;||;
+//           | |   ||   ||   ||   |;||;
+//           | |   ||   ``   ||   |;||;
+//           | |   ||        ||   |;||;
+//           | \––––––––––––––––––/´||;
+//           \––––––––––––––––––––––//,
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//       COPYRIGHT (c) 2025 MYTHOS PROJECT
+//              ALL RIGHTS RESERVED
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 #include <mem/pmm.h>
 #include <std/string.h>
 #include <uefi.h>
@@ -46,16 +62,22 @@ void mark_usable_memory(PhysicalMemoryManager* pmm, EFI_MEMORY_DESCRIPTOR* map,
 
 // 判断页是否被使用
 bool is_page_used(PhysicalMemoryManager* pmm, uint64_t page_index) {
-    uint64_t byte_idx = page_index / 64;
-    uint64_t bit_idx = page_index % 64;
-    return (pmm->bitmap[byte_idx] & (1ULL << bit_idx)) != 0;
+    if (!pmm || !pmm->bitmap) return 1;
+    if (page_index >= pmm->total_pages) return 1; // 越界视为已使用
+    
+    uint64_t byte_idx = BITMAP_INDEX(page_index);
+    uint64_t bit_idx = BITMAP_BIT(page_index);
+    return (pmm->bitmap[byte_idx] & (1U << bit_idx)) != 0;
 }
 
 // 标记页为已使用
 void mark_page_used(PhysicalMemoryManager* pmm, uint64_t page_index) {
-    uint64_t byte_idx = page_index / 64;
-    uint64_t bit_idx = page_index % 64;
-    pmm->bitmap[byte_idx] |= (1ULL << bit_idx);
+    if (!pmm || !pmm->bitmap) return;
+    if (page_index >= pmm->total_pages) return;
+    
+    uint64_t byte_idx = BITMAP_INDEX(page_index);
+    uint64_t bit_idx = BITMAP_BIT(page_index);
+    pmm->bitmap[byte_idx] |= (1U << bit_idx);
 }
 
 // 标记连续页为已使用
@@ -67,13 +89,18 @@ void mark_pages_used(PhysicalMemoryManager* pmm, uint64_t start_page, uint64_t c
 
 // 标记页为空闲
 void mark_page_free(PhysicalMemoryManager* pmm, uint64_t page_index) {
-    uint64_t byte_idx = page_index / 64;
-    uint64_t bit_idx = page_index % 64;
-    pmm->bitmap[byte_idx] &= ~(1ULL << bit_idx);
+    if (!pmm || !pmm->bitmap) return;
+    if (page_index >= pmm->total_pages) return;
+    
+    uint64_t byte_idx = BITMAP_INDEX(page_index);
+    uint64_t bit_idx = BITMAP_BIT(page_index);
+    pmm->bitmap[byte_idx] &= ~(1U << bit_idx);
 }
 
 // 分配一个物理页
 uint64_t pmmAllocatePage(PhysicalMemoryManager* pmm) {
+    if (!pmm || !pmm->bitmap) return 0;
+    
     // 遍历位图查找空闲页
     for (uint64_t i = 0; i < pmm->total_pages; i++) {
         if (!is_page_used(pmm, i)) {
@@ -87,17 +114,22 @@ uint64_t pmmAllocatePage(PhysicalMemoryManager* pmm) {
 
 // 释放一个物理页
 void pmmFreePage(PhysicalMemoryManager* pmm, uint64_t page_addr) {
+    if (!pmm || !pmm->bitmap) return;
+    
     uint64_t page_index = page_addr / PAGE_SIZE;
     if (page_index >= pmm->total_pages) return;  // 越界检查
+    
     if (is_page_used(pmm, page_index)) {
         mark_page_free(pmm, page_index);
-        pmm->used_pages--;
+        if (pmm->used_pages > 0) pmm->used_pages--;
     }
 }
 
 // 初始化物理内存管理器
 void initPMM(PhysicalMemoryManager* pmm, EFI_MEMORY_DESCRIPTOR* map, 
              uint64_t map_size, uint64_t desc_size) {
+    if (!pmm || !map) return;
+    
     // 计算总内存页数
     uint64_t total_memory = calculate_total_memory(map, map_size, desc_size);
     pmm->total_pages = total_memory / PAGE_SIZE;
@@ -109,7 +141,7 @@ void initPMM(PhysicalMemoryManager* pmm, EFI_MEMORY_DESCRIPTOR* map,
     // 查找存储位图的空闲区域
     uint64_t bitmap_addr = find_free_memory_region(map, map_size, desc_size, bitmap_pages);
     if (bitmap_addr == 0) {
-        // 处理错误：没有足够内存存储位图（此处简化处理）
+        // 处理错误：没有足够内存存储位图
         return;
     }
 

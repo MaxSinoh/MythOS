@@ -226,6 +226,63 @@ void freeAt(EFI_PHYSICAL_ADDRESS addr, UINTN size)
 }
 
 /**
+ * @brief 安全系统停止函数
+ * 显示错误信息并等待用户按键后重启系统
+ * @param message 错误信息
+ */
+void safeHaltWithMessage(const CHAR16 *message)
+{
+    puts(message);
+    puts(L"\nSystem halted. Press any key to reboot.");
+    
+    // 等待按键
+    struct EFI_INPUT_KEY key;
+    ST->ConIn->ReadKeyStroke(ST->ConIn, &key);
+    
+    // 系统重启
+    ST->RuntimeServices->EFI_RESET_SYSTEM(EfiResetCold, EFI_SUCCESS, 0, NULL);
+}
+
+/**
+ * @brief 安全打开根目录
+ * 尝试打开文件系统根目录，失败时提供错误信息
+ * @param root 返回的根目录指针
+ * @return EFI状态码
+ */
+EFI_STATUS safeOpenRoot(struct EFI_FILE_PROTOCOL **root)
+{
+    EFI_STATUS status = SFSP->OpenVolume(SFSP, root);
+    if (EFI_ERROR(status)) {
+        puts(L"ERROR: Failed to open root directory");
+    }
+    return status;
+}
+
+/**
+ * @brief 安全打开内核文件
+ * 尝试打开内核文件，支持备用路径
+ * @param root 根目录指针
+ * @param kernel_file 返回的内核文件指针
+ * @return EFI状态码
+ */
+EFI_STATUS safeOpenKernel(struct EFI_FILE_PROTOCOL *root, struct EFI_FILE_PROTOCOL **kernel_file)
+{
+    // 尝试主路径
+    EFI_STATUS status = root->Open(root, kernel_file, L"\\FlameCore.elf", 
+                                  EFI_FILE_MODE_READ, 0);
+    if (EFI_ERROR(status)) {
+        puts(L"WARNING: Failed to open kernel from root, trying EFI path...");
+        // 尝试备用路径
+        status = root->Open(root, kernel_file, L"\\EFI\\BOOT\\FlameCore.elf", 
+                           EFI_FILE_MODE_READ, 0);
+        if (EFI_ERROR(status)) {
+            puts(L"ERROR: Failed to open kernel from alternate path");
+        }
+    }
+    return status;
+}
+
+/**
  * @brief 计算 ELF 文件中所有加载段的地址范围
  * 该函数遍历 ELF 文件中的所有程序头，计算所有加载段的起始地址和结束地址范围。
  * @param ehdr ELF 文件头指针
@@ -350,10 +407,6 @@ EFI_STATUS exitBootServices(EFI_HANDLE image_handle, MEMORY_MAP *memory_map) {
 
 /**
  * @brief 程序的入口点函数
- * 这个函数是EFI应用程序的入口点，负责初始化EFI环境，加载内核文件，设置帧缓冲区配置，并跳转到内核入口点执行。
- * @param ImageHandle EFI图像句柄，代表当前EFI应用程序
- * @param SystemTable 指向EFI系统表的指针，包含了系统级的服务和数据
- * @return EFI_STATUS 类型的返回值，表示函数执行的状态。如果成功，则返回EFI_SUCCESS
  */
 EFI_STATUS entryPoint(EFI_HANDLE ImageHandle, struct EFI_SYSTEM_TABLE *SystemTable)
 {
@@ -361,44 +414,51 @@ EFI_STATUS entryPoint(EFI_HANDLE ImageHandle, struct EFI_SYSTEM_TABLE *SystemTab
     efi_init(ImageHandle, SystemTable);
     // 清屏
     ST->ConOut->ClearScreen(ST->ConOut);
+    
     EFI_STATUS status;
     EFI_PHYSICAL_ADDRESS entry_addr;
     struct EFI_FILE_PROTOCOL *root, *kernel_file;
     UINTN kernel_size = 4194304;
     void *kernel_buffer = malloc(kernel_size);
-    // 打开文件系统卷
-    status = SFSP->OpenVolume(SFSP, &root);
-    if (EFI_ERROR(status)) {
-        puts(L"FAILED: error while opening root dir");
-        while (1);
+    
+    if (!kernel_buffer) {
+        safeHaltWithMessage(L"CRITICAL: Failed to allocate kernel buffer");
     }
-    // 打开内核文件
-    status = root->Open(root, &kernel_file, L"\\FlameCore.elf", EFI_FILE_MODE_READ, 0);
+    
+    // 安全打开文件系统
+    status = safeOpenRoot(&root);
     if (EFI_ERROR(status)) {
-        puts(L"FAILED: error while opening kernel file");
-
-        while (1);
+        safeHaltWithMessage(L"CRITICAL: Cannot access file system");
     }
+    
+    // 安全打开内核文件
+    status = safeOpenKernel(root, &kernel_file);
+    if (EFI_ERROR(status)) {
+        safeHaltWithMessage(L"CRITICAL: Kernel file not found");
+    }
+    
     // 读取内核文件内容
     status = kernel_file->Read(kernel_file, &kernel_size, kernel_buffer);
     if (EFI_ERROR(status)) {
-        puts(L"FAILED: error while reading kernel file");
-        while (1);
+        safeHaltWithMessage(L"CRITICAL: Error while reading kernel file");
     }
+    
     // 解析elf文件头部并计算内核加载地址范围
     Elf64_Ehdr *ehdr = (Elf64_Ehdr *) kernel_buffer;
     UINT64 kernel_first_addr, kernel_last_addr;
     CalcLoadAddressRange(ehdr, &kernel_first_addr, &kernel_last_addr);
+    
     // 在指定地址范围分配内存
     status = mallocAt(kernel_first_addr, kernel_last_addr - kernel_first_addr);
     if (EFI_ERROR(status)) {
-        puts(L"FAILED: error while allocating buffer for kernel");
-        while (1);
+        safeHaltWithMessage(L"CRITICAL: Error while allocating buffer for kernel");
     }
+    
     // 复制加载段到指定内存地址
     CopyLoadSegments(ehdr);
     entry_addr = ehdr->e_entry;
     free(kernel_buffer);
+    
     // 配置帧缓冲
     struct FrameBufferConfig config = {
         (UINT8 *) GOP->Mode->FrameBufferBase,
@@ -406,6 +466,7 @@ EFI_STATUS entryPoint(EFI_HANDLE ImageHandle, struct EFI_SYSTEM_TABLE *SystemTab
         GOP->Mode->Info->HorizontalResolution,
         GOP->Mode->Info->VerticalResolution
     };
+    
     // 根据像素格式设置配置
     switch (GOP->Mode->Info->PixelFormat) {
         case PixelRedGreenBlueReserved8BitPerColor:
@@ -417,8 +478,9 @@ EFI_STATUS entryPoint(EFI_HANDLE ImageHandle, struct EFI_SYSTEM_TABLE *SystemTab
         default:
             puts(L"FAILED: unsupported pixel format: ");
             puth(GOP->Mode->Info->PixelFormat);
-            while (1);
+            safeHaltWithMessage(L"CRITICAL: Unsupported pixel format");
     }
+    
     // 初始化启动配置
     BOOT_CONFIG BootConfig;
     BootConfig.MemoryMap.MapSize = 4096;
@@ -426,21 +488,22 @@ EFI_STATUS entryPoint(EFI_HANDLE ImageHandle, struct EFI_SYSTEM_TABLE *SystemTab
     BootConfig.MemoryMap.MapKey = 0;
     BootConfig.MemoryMap.DescriptorSize = 0;
     BootConfig.MemoryMap.DescriptorVersion = 0;
+    
     // 获取内存映射
-    GetMMP(&BootConfig.MemoryMap);
+    status = GetMMP(&BootConfig.MemoryMap);
+    if (EFI_ERROR(status)) {
+        safeHaltWithMessage(L"CRITICAL: Failed to get memory map");
+    }
+    
     // 定义内核函数类型
     typedef void (* __attribute__((sysv_abi)) Kernel)(const struct FrameBufferConfig *, const BOOT_CONFIG *);
     Kernel kernel = (Kernel) entry_addr;
+    
     // 启动内核
     kernel(&config, (BOOT_CONFIG *) &BootConfig);
-    // 退出引导服务
-    exitBootServices(ImageHandle, &BootConfig.MemoryMap);
-    struct EFI_TIME time;
-    status = ST->RuntimeServices->EFI_GET_TIME(&time, NULL);
-    if (status == EFI_SUCCESS) {
-        puts(L"SUCCESS: kernel loaded and executed");
-    } else {
-        puts(L"FAILED: error while getting time");
-    }
-    while (1);
+    
+    // 如果内核返回，说明执行失败
+    safeHaltWithMessage(L"CRITICAL: Kernel execution failed");
+    
+    return EFI_SUCCESS;
 }

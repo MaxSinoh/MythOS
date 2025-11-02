@@ -18,17 +18,37 @@
 #include <std/string.h>
 
 /**
+ * 初始化控制台
+ * @param console 控制台对象指针
+ * @param config 帧缓冲区配置
+ * @param fg_color 前景色
+ * @param bg_color 背景色
+ */
+void initConsole(Console *console, const struct FrameBufferConfig *config, PixelColor fg_color, PixelColor bg_color) {
+    if (!console || !config) return;
+    
+    console->config = config;
+    console->fg_color = fg_color;
+    console->bg_color = bg_color;
+    console->cursor_row = 0;
+    console->cursor_column = 0;
+    
+    // 清空缓冲区
+    for (int i = 0; i <= ROWS; i++) {
+        for (int j = 0; j <= COLUMNS; j++) {
+            console->buffer[i][j] = '\0';
+        }
+    }
+}
+
+/**
  * 在控制台上打印字符串
  * @param console 控制台对象指针
  * @param s 要打印的字符串
- * 
- * 该函数遍历字符串中的每个字符，并在控制台上绘制它们。
- * 如果遇到换行符('\n')，则调用newLine函数换行。
- * 如果遇到回车符('\r')，则将光标列重置为0。
- * 如果遇到制表符('\t')，则将光标移动到下一个制表位。
- * 如果光标未达到列限制，则将字符绘制到当前光标位置，并更新光标位置。
  */
 void putString(Console *console, const char *s) {
+    if (!console || !s) return;
+    
     while (*s) {
         // 如果字符是换行符
         if (*s == '\n')
@@ -70,12 +90,10 @@ void putString(Console *console, const char *s) {
 /**
  * 在控制台上换行
  * @param console 控制台对象指针
- * 
- * 该函数用于处理控制台换行操作。
- * 如果光标未达到行限制，则将光标移动到下一行。
- * 如果光标已达到行限制，则清除屏幕并滚动缓冲区内容。
  */
 void newLine(Console *console) {
+    if (!console) return;
+    
     // 将光标列重置为0
     console->cursor_column = 0;
 
