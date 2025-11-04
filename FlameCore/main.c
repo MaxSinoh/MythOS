@@ -19,6 +19,7 @@
 #include <fbc.h>
 #include <asm/hal/io.h>
 #include <asm/gdt/gdt.h>
+#include <asm/idt/idt.h>
 #include <gui/console/console.h>
 #include <gui/graphic/color.h>
 #include <gui/view/bmp.h>
@@ -28,11 +29,12 @@
 #include <std/stdio.h>
 #include <std/string.h>
 #include <mem/pmm.h>
+#include <mem/vmm.h>
 
 #define OSNAME "MythOS"
-#define OSVERSION "0.3.4"
+#define OSVERSION "0.3.5"
 #define CORENAME "FlameCore"
-#define COREVERSION "0.2.3"
+#define COREVERSION "0.2.4"
 
 // 使用静态变量替代未初始化指针
 static Console main_console;
@@ -66,6 +68,9 @@ void FlameCoreMain(const struct FrameBufferConfig *fbc, BOOT_CONFIG *BootConfig)
     }
 
     initGDT();  // 初始化GDT
+    printk("GDT initialized\n");
+    initIDT();  // 初始化IDT
+    printk("IDT initialized\n");
 
     // 获取内存映射信息（安全检查）
     if (BootConfig && BootConfig->MemoryMap.Buffer) {
