@@ -230,4 +230,6 @@ void initIDT(void) {
     
     // 加载IDT
     __asm__ volatile("lidt %0" : : "m" (idt_ptr));
+    
+    printk("IDT initialized.\n");
 }

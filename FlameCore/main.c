@@ -68,9 +68,7 @@ void FlameCoreMain(const struct FrameBufferConfig *fbc, BOOT_CONFIG *BootConfig)
     }
 
     initGDT();  // 初始化GDT
-    printk("GDT initialized\n");
     initIDT();  // 初始化IDT
-    printk("IDT initialized\n");
 
     // 获取内存映射信息（安全检查）
     if (BootConfig && BootConfig->MemoryMap.Buffer) {

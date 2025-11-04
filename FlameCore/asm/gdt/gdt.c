@@ -15,6 +15,7 @@
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 #include <asm/gdt/gdt.h>
+#include <gui/printk.h>
 
 #define GDT_LENGTH 5            // GDT 表中的描述符数量
 #define dataSelector 0x10       // 数据段选择子，用于数据段和堆栈段的访问
@@ -87,4 +88,5 @@ void initGDT(void)
 		: [dsel] "rm" (dataSelector)    // 将数据段选择子传递给汇编代码
         : "memory"                      // 告诉编译器，这段代码会修改内存中的数据
 	);  
+	printk("GDT Initialized\n");
 }
