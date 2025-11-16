@@ -16,133 +16,152 @@
 
 SHELL = C:\Windows\System32\cmd.exe
 
+# Toolchain
 GCC = gcc
 ELF_GCC = x86_64-elf-gcc
 LD = x86_64-elf-ld
 QEMU = qemu-system-x86_64
 
-GCC_FLAGS = -I includes -nostdlib -nostdinc -fno-builtin -Wl,--subsystem,10 -e $(ENTRY_POINT) -o
-ELF_GCC_FLAGS = -I includes -O2 -Wall -g -ffreestanding -fno-exceptions -std=c99 -c -o
-LD_FLAGS = -e $(LD_ENTRY) -z norelro -Ttext-segment 0x100000 --static -o
-QEMU_FLAGS = -bios ./OVMF.fd -net none -drive file=fat:rw:$(ESP),index=0,format=vvfat
+# Build configuration
+BUILD_MODE ?= debug
+ifeq ($(BUILD_MODE),release)
+	OPTIMIZATION = -O3
+	DEBUG_FLAGS = 
+else
+	OPTIMIZATION = -O0
+	DEBUG_FLAGS = -g
+endif
 
+# Flags
+GCC_FLAGS = -I includes -nostdlib -nostdinc -fno-builtin -Wl,--subsystem,10 -e $(ENTRY_POINT) -o
+ELF_GCC_BASE_FLAGS = -I includes -Wall -Werror -ffreestanding -fno-exceptions -std=c99
+ELF_GCC_FLAGS = $(ELF_GCC_BASE_FLAGS) $(OPTIMIZATION) $(DEBUG_FLAGS) -MMD -MP -c -o
+LD_FLAGS = -e $(LD_ENTRY) -z norelro -Ttext-segment 0x100000 --static -o
+QEMU_FLAGS = -bios ./OVMF.fd -net none -drive file=fat:rw:$(ESP_DIR),index=0,format=vvfat
+
+# Entry points
 ENTRY_POINT = entryPoint
 LD_ENTRY = FlameCoreMain
 
-BOOT_LOADER = .\BootLoader\BootLoader.c
-BOOT_LOADER_EFI = .\bin\BootLoader.efi
-FLAMECORE = .\FlameCore\main.c
-FLAMECORE_O = .\FlameCore\main.o
-FLAMECORE_ELF = .\bin\FlameCore.elf
-GRAPHICS = .\FlameCore\gui\graphic\graphics.c
-GRAPHICS_O = .\FlameCore\gui\graphic\graphics.o
-FONT = .\FlameCore\gui\graphic\font.c
-FONT_O = .\FlameCore\gui\graphic\font.o
-COLOR = .\FlameCore\gui\graphic\color.c
-COLOR_O = .\FlameCore\gui\graphic\color.o
-BMP = .\FlameCore\gui\view\bmp.c
-BMP_O = .\FlameCore\gui\view\bmp.o
-CONSOLE = .\FlameCore\gui\console\console.c
-CONSOLE_O = .\FlameCore\gui\console\console.o
-STRING = .\FlameCore\std\string.c
-STRING_O = .\FlameCore\std\string.o
-STDLIB = .\FlameCore\std\stdlib.c
-STDLIB_O = .\FlameCore\std\stdlib.o
-STDIO = .\FlameCore\std\stdio.c
-STDIO_O = .\FlameCore\std\stdio.o
-IO = .\FlameCore\asm\hal\io.c
-IO_O = .\FlameCore\asm\hal\io.o
-GDT = .\FlameCore\asm\gdt\gdt.c
-GDT_O = .\FlameCore\asm\gdt\gdt.o
-IDT = .\FlameCore\asm\idt\idt.c
-IDT_O = .\FlameCore\asm\idt\idt.o
-PMM = .\FlameCore\mem\pmm.c
-PMM_O = .\FlameCore\mem\pmm.o
-VMM = .\FlameCore\mem\vmm.c
-VMM_O = .\FlameCore\mem\vmm.o
+# Directories
+SRC_DIR = FlameCore
+OBJ_DIR = build/obj
+BIN_DIR = bin
+ESP_DIR = esp
 
-ESP = .\esp
-ESP_BOOTLOADER = $(ESP)\EFI\BOOT\BOOTX64.EFI
-ESP_FLAMECORE = $(ESP)\FlameCore.elf
+# Source files
+BOOT_LOADER_SRC = BootLoader/BootLoader.c
+BOOT_LOADER_EFI = $(BIN_DIR)\BootLoader.efi
 
-all: info clean objects efi link
+# Auto-discover FlameCore source files
+FLAMECORE_SRCS = $(wildcard $(SRC_DIR)/*.c) \
+                 $(wildcard $(SRC_DIR)/*/*.c) \
+                 $(wildcard $(SRC_DIR)/*/*/*.c)
 
-clean:
-	@echo Cleaning...
-	@del .\\bin
-	@del .\\esp
-	@echo Cleaned.
+FLAMECORE_OBJS = $(patsubst %.c,$(OBJ_DIR)/%.o,$(FLAMECORE_SRCS))
+FLAMECORE_DEPS = $(FLAMECORE_OBJS:.o=.d)
+
+FLAMECORE_ELF = $(BIN_DIR)\FlameCore.elf
+
+# ESP paths
+ESP_BOOTLOADER = $(ESP_DIR)\EFI\BOOT\BOOTX64.EFI
+ESP_FLAMECORE = $(ESP_DIR)\FlameCore.elf
+
+# Default target
+all: info $(BIN_DIR) $(OBJ_DIR) $(ESP_DIR) efi objects link
+
+# Create directories
+$(BIN_DIR):
+	@if not exist "$(BIN_DIR)" mkdir "$(BIN_DIR)"
+	@if not exist "$(BIN_DIR)/EFI" mkdir "$(BIN_DIR)/EFI"
+	@if not exist "$(BIN_DIR)/EFI/BOOT" mkdir "$(BIN_DIR)/EFI/BOOT"
+
+$(OBJ_DIR):
+	@if not exist "$(OBJ_DIR)" mkdir "$(OBJ_DIR)"
+	@if not exist "$(OBJ_DIR)/$(SRC_DIR)" mkdir "$(OBJ_DIR)/$(SRC_DIR)"
+	@if not exist "$(OBJ_DIR)/$(SRC_DIR)/asm" mkdir "$(OBJ_DIR)/$(SRC_DIR)/asm"
+	@if not exist "$(OBJ_DIR)/$(SRC_DIR)/asm/gdt" mkdir "$(OBJ_DIR)/$(SRC_DIR)/asm/gdt"
+	@if not exist "$(OBJ_DIR)/$(SRC_DIR)/asm/hal" mkdir "$(OBJ_DIR)/$(SRC_DIR)/asm/hal"
+	@if not exist "$(OBJ_DIR)/$(SRC_DIR)/asm/idt" mkdir "$(OBJ_DIR)/$(SRC_DIR)/asm/idt"
+	@if not exist "$(OBJ_DIR)/$(SRC_DIR)/gui" mkdir "$(OBJ_DIR)/$(SRC_DIR)/gui"
+	@if not exist "$(OBJ_DIR)/$(SRC_DIR)/gui/console" mkdir "$(OBJ_DIR)/$(SRC_DIR)/gui/console"
+	@if not exist "$(OBJ_DIR)/$(SRC_DIR)/gui/graphic" mkdir "$(OBJ_DIR)/$(SRC_DIR)/gui/graphic"
+	@if not exist "$(OBJ_DIR)/$(SRC_DIR)/gui/view" mkdir "$(OBJ_DIR)/$(SRC_DIR)/gui/view"
+	@if not exist "$(OBJ_DIR)/$(SRC_DIR)/mem" mkdir "$(OBJ_DIR)/$(SRC_DIR)/mem"
+	@if not exist "$(OBJ_DIR)/$(SRC_DIR)/std" mkdir "$(OBJ_DIR)/$(SRC_DIR)/std"
+
+$(ESP_DIR):
+	@if not exist "$(ESP_DIR)" mkdir "$(ESP_DIR)"
+	@if not exist "$(ESP_DIR)/EFI" mkdir "$(ESP_DIR)/EFI"
+	@if not exist "$(ESP_DIR)/EFI/BOOT" mkdir "$(ESP_DIR)/EFI/BOOT"
 
 info:
 	@echo Welcome to compile MythOS.
+	@echo Build mode: $(BUILD_MODE)
 	@echo Preparing for compiling...
-	-@mkdir .\\bin\\EFI\\BOOT
-	-@mkdir .\\esp\\EFI\\BOOT
 
-efi:
+clean:
+	@echo Cleaning...
+	@if exist "$(BIN_DIR)" rmdir /s /q "$(BIN_DIR)"
+	@if exist "$(OBJ_DIR)" rmdir /s /q "$(OBJ_DIR)"
+	@if exist "$(ESP_DIR)" rmdir /s /q "$(ESP_DIR)"
+	@echo Cleaned.
+
+efi: $(BIN_DIR) $(BOOT_LOADER_EFI)
+
+$(BOOT_LOADER_EFI): $(BOOT_LOADER_SRC)
 	@echo Compiling BootLoader...
-	@$(GCC) $(GCC_FLAGS) $(BOOT_LOADER_EFI) $(BOOT_LOADER)
-	@echo Done.
+	@$(GCC) $(GCC_FLAGS) $@ $<
+	@echo BootLoader compiled.
 
-objects:
-	@echo Compiling FLameCore...
-	@$(ELF_GCC) $(FLAMECORE) $(ELF_GCC_FLAGS) $(FLAMECORE_O)
-	@echo Done.
-	@echo Compiling font...
-	@$(ELF_GCC) $(FONT) $(ELF_GCC_FLAGS) $(FONT_O)
-	@echo Done.
-	@echo Compiling graphics...
-	@$(ELF_GCC) $(GRAPHICS) $(ELF_GCC_FLAGS) $(GRAPHICS_O)
-	@echo Done.
-	@echo Compiling color...
-	@$(ELF_GCC) $(COLOR) $(ELF_GCC_FLAGS) $(COLOR_O)
-	@echo Done.
-	@echo Compiling bmp...
-	@$(ELF_GCC) $(BMP) $(ELF_GCC_FLAGS) $(BMP_O)
-	@echo Done.
-	@echo Compiling console...
-	@$(ELF_GCC) $(CONSOLE) $(ELF_GCC_FLAGS) $(CONSOLE_O)
-	@echo Done.
-	@echo Compiling string...
-	@$(ELF_GCC) $(STRING) $(ELF_GCC_FLAGS) $(STRING_O)
-	@echo Done.
-	@echo Compiling stdlib...
-	@$(ELF_GCC) $(STDLIB) $(ELF_GCC_FLAGS) $(STDLIB_O)
-	@echo Done.
-	@echo Compiling stdio...
-	@$(ELF_GCC) $(STDIO) $(ELF_GCC_FLAGS) $(STDIO_O)
-	@echo Done.
-	@echo Compiling io...
-	@$(ELF_GCC) $(IO) $(ELF_GCC_FLAGS) $(IO_O)
-	@echo Done.
-	@echo Compiling gdt...
-	@$(ELF_GCC) $(GDT) $(ELF_GCC_FLAGS) $(GDT_O)
-	@echo Done.
-	@echo Compiling idt...
-	@$(ELF_GCC) $(IDT) $(ELF_GCC_FLAGS) $(IDT_O)
-	@echo Done.
-	@echo Compiling physical memory...
-	@$(ELF_GCC) $(PMM) $(ELF_GCC_FLAGS) $(PMM_O)
-	@echo Done.
-	@echo Compiling virtual memory...
-	@$(ELF_GCC) $(VMM) $(ELF_GCC_FLAGS) $(VMM_O)
-	@echo Done.
+objects: $(FLAMECORE_OBJS)
 
-link:
+# Pattern rule for compiling .c files
+$(OBJ_DIR)/%.o: %.c
+	@echo Compiling $<...
+	@if not exist "$(@D)" mkdir "$(@D)"
+	@$(ELF_GCC) $(ELF_GCC_FLAGS) $@ $<
+	@echo $< compiled.
+
+# Include dependency files
+-include $(FLAMECORE_DEPS)
+
+link: $(FLAMECORE_ELF)
+
+$(FLAMECORE_ELF): $(FLAMECORE_OBJS)
 	@echo Linking...
-	@$(LD) $(LD_FLAGS) $(FLAMECORE_ELF) $(FLAMECORE_O) $(GRAPHICS_O) $(FONT_O) $(COLOR_O) $(BMP_O) $(CONSOLE_O) $(STRING_O) $(STDLIB_O) $(STDIO_O) $(IO_O) $(GDT_O) $(IDT_O) $(PMM_O) $(VMM_O)
-	@echo Done.
+	@$(LD) $(LD_FLAGS) $@ $^
+	@echo Linking done.
+
+install: $(FLAMECORE_ELF) $(BOOT_LOADER_EFI)
 	@echo Copying BootLoader and kernel...
-	@copy .\bin\BootLoader.efi $(ESP_BOOTLOADER)
-	@copy .\bin\FlameCore.elf $(ESP_FLAMECORE)
-	@del .\\bin
-	@echo Done.
+	@copy $(BOOT_LOADER_EFI) $(ESP_BOOTLOADER)
+	@copy $(FLAMECORE_ELF) $(ESP_FLAMECORE)
+	@echo Installation done.
 
-done:
-	@echo All done.
-
-run: all done qemu
-
-qemu:
+run: all install
 	@echo Running MythOS in QEMU virtual machine...
 	@$(QEMU) $(QEMU_FLAGS)
+
+debug: BUILD_MODE = debug
+debug: all
+
+release: BUILD_MODE = release
+release: all
+
+help:
+	@echo Available targets:
+	@echo   all       - Build everything (default)
+	@echo   clean     - Clean build artifacts
+	@echo   debug     - Build with debug symbols
+	@echo   release   - Build with optimizations
+	@echo   run       - Build and run in QEMU
+	@echo   install   - Install to ESP directory
+	@echo   help      - Show this help
+
+.PHONY: all clean info efi objects link install run debug release help
+
+# Show warning if no source files found
+ifeq ($(FLAMECORE_SRCS),)
+$(warning No source files found in $(SRC_DIR))
+endif

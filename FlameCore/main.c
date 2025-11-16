@@ -32,7 +32,7 @@
 #include <mem/vmm.h>
 
 #define OSNAME "MythOS"
-#define OSVERSION "0.3.5"
+#define OSVERSION "0.3.6"
 #define CORENAME "FlameCore"
 #define COREVERSION "0.2.4"
 
@@ -60,8 +60,8 @@ void FlameCoreMain(const struct FrameBufferConfig *fbc, BOOT_CONFIG *BootConfig)
     // 安全初始化控制台
     initConsole(&main_console, fbc, black, white);
 
-    // 绘制logo（安全检查）
-    if (logo) {
+    // 绘制logo（检查logo是否有效，通过检查BMP头魔数）
+    if (((BMP_IMAGE_HEADER *)logo)->magic == 0x4D42) {  // "BM" in little endian
         drawBMP((struct FrameBufferConfig *)fbc, (BMP_IMAGE_HEADER *)logo,
                 fbc->horizontal_resolution - 128 - 30,
                 fbc->vertical_resolution - 128 - 20, 1);

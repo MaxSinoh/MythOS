@@ -63,11 +63,11 @@ void putc(unsigned short c)
  * 将指向的字符串通过控制台输出函数输出到控制台。
  * @param s 指向要输出的字符串的指针
  */
-void puts(unsigned short *s)
+void puts(const CHAR16 *s)
 {
     // 调用ST结构体中ConOut成员的OutputString方法，输出字符串s
     // ST->ConOut->OutputString(ST->ConOut, s);
-    ST->ConOut->OutputString(ST->ConOut, s);
+    ST->ConOut->OutputString(ST->ConOut, (CHAR16*)s);
 }
 
 /**
