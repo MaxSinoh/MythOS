@@ -43,6 +43,15 @@ int vsprintf(char *str, const char *format, va_list ap)
         index_char = *(++index_ptr);
         if (!index_char) break; // 处理格式字符串以%结尾的情况
 
+        // 支持 64 位十六进制格式 %llx
+        if (index_char == 'l' && *(index_ptr + 1) == 'l' && *(index_ptr + 2) == 'x') {
+            unsigned long long val64 = va_arg(ap, unsigned long long);
+            itoa64((uint64_t)val64, &buf_ptr, 16);
+            index_ptr += 3;
+            index_char = *index_ptr;
+            continue;
+        }
+
         switch (index_char) {
             case 'x':
                 arg_uint = va_arg(ap, uint32_t); // %x应为无符号数

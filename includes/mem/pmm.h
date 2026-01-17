@@ -32,7 +32,7 @@
 typedef struct {
     uint64_t total_pages;      // 总物理页数
     uint64_t used_pages;       // 已使用页数
-    uint64_t* bitmap;          // 页分配位图（每 bit 表示一页是否被使用）
+    uint8_t* bitmap;          // 页分配位图（每 bit 表示一页是否被使用）
 } PhysicalMemoryManager;
 
 // 初始化物理内存管理器

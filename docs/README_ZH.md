@@ -1,5 +1,6 @@
 # MythOS
 <br><img src="../docs/logo.png" width="64" height="64" alt="MythOS">
+
 - 一个基于UEFI的现代操作系统，采用x86-64架构。
 - 版权所有 © 2025 MythOS Project.
 - 保留所有权利。
@@ -30,4 +31,7 @@ make run
 - 将'esp'文件夹中的'EFI'文件夹和'kernel.elf'文件复制到U盘中。
 - 用U盘启动你的真机。
 - 之后你将看到MythOS的屏幕。
+---
+## 代码行数
+- 总计 : 36 文件,  6442 代码, 1339 注释, 428 空行, 共 8209 行
 ---

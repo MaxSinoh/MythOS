@@ -32,3 +32,19 @@ void itoa(uint32_t value, char **buf_ptr_addr, uint8_t base)
         *((*buf_ptr_addr)++) = m - 10 + 'A'; // 'A'~'F'，10对应A，所以先减10再加'A'，同样用A~F连续
     }
 }
+
+// 64-bit unsigned integer to string (recursive)
+void itoa64(uint64_t value, char **buf_ptr_addr, uint8_t base)
+{
+    uint64_t m = value % base; // lowest digit
+    uint64_t i = value / base; // remaining
+    if (i) {
+        itoa64(i, buf_ptr_addr, base);
+    }
+
+    if (m < 10) {
+        *((*buf_ptr_addr)++) = (char)(m + '0');
+    } else {
+        *((*buf_ptr_addr)++) = (char)(m - 10 + 'A');
+    }
+}

@@ -67,7 +67,7 @@ bool is_page_used(PhysicalMemoryManager* pmm, uint64_t page_index) {
     
     uint64_t byte_idx = BITMAP_INDEX(page_index);
     uint64_t bit_idx = BITMAP_BIT(page_index);
-    return (pmm->bitmap[byte_idx] & (1U << bit_idx)) != 0;
+    return (pmm->bitmap[byte_idx] & (1u << bit_idx)) != 0;
 }
 
 // 标记页为已使用
@@ -77,7 +77,7 @@ void mark_page_used(PhysicalMemoryManager* pmm, uint64_t page_index) {
     
     uint64_t byte_idx = BITMAP_INDEX(page_index);
     uint64_t bit_idx = BITMAP_BIT(page_index);
-    pmm->bitmap[byte_idx] |= (1U << bit_idx);
+    pmm->bitmap[byte_idx] |= (1u << bit_idx);
 }
 
 // 标记连续页为已使用
@@ -94,7 +94,7 @@ void mark_page_free(PhysicalMemoryManager* pmm, uint64_t page_index) {
     
     uint64_t byte_idx = BITMAP_INDEX(page_index);
     uint64_t bit_idx = BITMAP_BIT(page_index);
-    pmm->bitmap[byte_idx] &= ~(1U << bit_idx);
+    pmm->bitmap[byte_idx] &= ~(1u << bit_idx);
 }
 
 // 分配一个物理页
@@ -146,7 +146,7 @@ void initPMM(PhysicalMemoryManager* pmm, EFI_MEMORY_DESCRIPTOR* map,
     }
 
     // 初始化位图（默认标记所有页为已使用）
-    pmm->bitmap = (uint64_t*)bitmap_addr;
+    pmm->bitmap = (uint8_t*)bitmap_addr;
     memset(pmm->bitmap, 0xFF, bitmap_size);  // 全部置为1（已使用）
 
     // 标记可用内存区域为空闲

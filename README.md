@@ -35,5 +35,5 @@ make run
 - Then you will see the screen of MythOS.
 ---
 ## Code Line
-- Total : 32 files, 6046 codes, 1164 comments, 275 blanks, all 7485 lines
+- Total : 36 files,  6442 codes, 1339 comments, 428 blanks, all 8209 lines
 ---

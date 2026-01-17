@@ -60,6 +60,8 @@ void FlameCoreMain(const struct FrameBufferConfig *fbc, BOOT_CONFIG *BootConfig)
     // 安全初始化控制台
     initConsole(&main_console, fbc, black, white);
 
+    // 测试 vsprintf/printk 对 %llx 的支持
+
     // 绘制logo（检查logo是否有效，通过检查BMP头魔数）
     if (((BMP_IMAGE_HEADER *)logo)->magic == 0x4D42) {  // "BM" in little endian
         drawBMP((struct FrameBufferConfig *)fbc, (BMP_IMAGE_HEADER *)logo,
@@ -82,7 +84,7 @@ void FlameCoreMain(const struct FrameBufferConfig *fbc, BOOT_CONFIG *BootConfig)
         // 测试内存分配
         uint64_t page_addr = pmmAllocatePage(&pmm);
         if (page_addr) {
-            printk("Allocated page at: 0x%x\n", page_addr);
+            printk("Allocated page at: 0x%llx\n", page_addr);
         } else {
             printk("ERROR: Memory allocation failed\n");
         }
@@ -92,7 +94,7 @@ void FlameCoreMain(const struct FrameBufferConfig *fbc, BOOT_CONFIG *BootConfig)
         for (int i = 0; i < 10; i++) {
             uint64_t addr = pmmAllocatePage(&pmm);
             if (addr) {
-                printk("Page %d: 0x%x\n", i, addr);
+                printk("Page %d: 0x%llx\n", i, addr);
             } else {
                 printk("ERROR: Failed to allocate page %d\n", i);
                 break;
