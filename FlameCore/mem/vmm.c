@@ -70,13 +70,13 @@ void initVMM(VirtualMemoryManager* vmm, PhysicalMemoryManager* pmm) {
     vmm->pml4 = (page_directory_t*)pml4_phys;
     memset(vmm->pml4, 0, PAGE_SIZE);
 
-    // 映射内核区域（示例：映射前1GB内存）
-    for (uint64_t i = 0; i < 0x40000000; i += PAGE_SIZE) {
+    // 映射内核区域（0x0 - 0x200000，即前2MB，包括内核代码）
+    for (uint64_t i = 0; i < 0x200000; i += PAGE_SIZE) {
         map_page(vmm, i, i, PAGE_PRESENT | PAGE_WRITE);
     }
 
-    // 激活页表
-    activate_page_table(vmm->pml4);
+    // 暂时不激活页表，使用UEFI的现有页表
+    // activate_page_table(vmm->pml4);
 }
 
 // 映射虚拟地址到物理地址

@@ -60,16 +60,7 @@ void FlameCoreMain(const struct FrameBufferConfig *fbc, BOOT_CONFIG *BootConfig)
     // 安全初始化控制台
     initConsole(&main_console, fbc, black, white);
 
-    // 测试增强的 printk 格式
-    printk("Testing enhanced formats:\n");
-    printk("Hex: %x %08x %llx\n", 255, 255, 0x1122334455667788ULL);
-    printk("Dec: %d %5d %-5d\n", 42, 42, 42);
-    printk("Unsigned: %u %llu\n", 123, 123456789012345ULL);
-    printk("Octal: %o %llo\n", 255, 0x1122334455667788ULL);
-    printk("Binary: %b %llb\n", 15, 0xFFULL);
-    printk("String: %s %.5s %10s %-10s\n", "hello", "world", "hi", "hi");
-    printk("Pointer: %p\n", (void*)0xDEADBEEF);
-    printk("Char: %c\n", 'A');
+    // 测试 vsprintf/printk 对 %llx 的支持
 
     // 绘制logo（检查logo是否有效，通过检查BMP头魔数）
     if (((BMP_IMAGE_HEADER *)logo)->magic == 0x4D42) {  // "BM" in little endian
