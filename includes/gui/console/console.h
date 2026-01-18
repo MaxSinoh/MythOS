@@ -20,7 +20,7 @@
 #include <fbc.h>
 #include <gui/graphic/graphics.h>
 
-#define ROWS 25  // 定义控制台行数
+#define ROWS 50  // 定义控制台行数
 #define COLUMNS 90  // 定义控制台列数
 
 typedef struct {  // 定义一个控制台结构体

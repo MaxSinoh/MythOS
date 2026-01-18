@@ -48,3 +48,41 @@ void itoa64(uint64_t value, char **buf_ptr_addr, uint8_t base)
         *((*buf_ptr_addr)++) = (char)(m - 10 + 'A');
     }
 }
+
+// Unsigned integer to string (non-recursive) into provided buffer. Returns length.
+int uitoa(uint32_t value, char *buf, uint8_t base)
+{
+    char tmp[33];
+    int pos = 0;
+    if (value == 0) {
+        tmp[pos++] = '0';
+    } else {
+        while (value) {
+            uint32_t d = value % base;
+            tmp[pos++] = (d < 10) ? (char)('0' + d) : (char)('A' + (d - 10));
+            value /= base;
+        }
+    }
+    // reverse into buf
+    for (int i = 0; i < pos; i++) buf[i] = tmp[pos - 1 - i];
+    buf[pos] = '\0';
+    return pos;
+}
+
+int uitoa64(uint64_t value, char *buf, uint8_t base)
+{
+    char tmp[65];
+    int pos = 0;
+    if (value == 0) {
+        tmp[pos++] = '0';
+    } else {
+        while (value) {
+            uint64_t d = value % base;
+            tmp[pos++] = (d < 10) ? (char)('0' + d) : (char)('A' + (d - 10));
+            value /= base;
+        }
+    }
+    for (int i = 0; i < pos; i++) buf[i] = tmp[pos - 1 - i];
+    buf[pos] = '\0';
+    return pos;
+}
