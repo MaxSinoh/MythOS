@@ -29,22 +29,20 @@
 #define BITMAP_BIT(page_idx) ((page_idx) % BITS_PER_BYTE)
 
 // 物理内存管理器结构体
-typedef struct {
+typedef struct
+{
     uint64_t total_pages;      // 总物理页数
     uint64_t used_pages;       // 已使用页数
-    uint8_t* bitmap;          // 页分配位图（每 bit 表示一页是否被使用）
+    uint8_t* bitmap;           // 页分配位图（每 bit 表示一页是否被使用）
 } PhysicalMemoryManager;
 
 // 初始化物理内存管理器
 void initPMM(PhysicalMemoryManager* pmm, EFI_MEMORY_DESCRIPTOR* map, uint64_t map_size, uint64_t desc_size);
-
 // 分配一个物理页（返回页的物理地址）
 uint64_t pmmAllocatePage(PhysicalMemoryManager* pmm);
-
 // 释放一个物理页
 void pmmFreePage(PhysicalMemoryManager* pmm, uint64_t page_addr);
-
-// 辅助函数声明
+// 辅助函数
 uint64_t calculate_total_memory(EFI_MEMORY_DESCRIPTOR* map, uint64_t map_size, uint64_t desc_size);
 uint64_t find_free_memory_region(EFI_MEMORY_DESCRIPTOR* map, uint64_t map_size, uint64_t desc_size, uint64_t pages_needed);
 void mark_usable_memory(PhysicalMemoryManager* pmm, EFI_MEMORY_DESCRIPTOR* map, uint64_t map_size, uint64_t desc_size);

@@ -17,13 +17,14 @@
 #include <gui/graphic/graphics.h>
 #include <gui/graphic/color.h>
 
-PixelColor black =       {0, 0, 0};         // 黑色。
-PixelColor white =       {255, 255, 255};   // 白色。
-PixelColor red =         {255, 0, 0};       // 红色。
-PixelColor green =       {0, 255, 0};       // 绿色。
-PixelColor blue =        {0, 0, 255};       // 蓝色。
-PixelColor yellow =      {255, 255, 0};     // 黄色。
-PixelColor cyan =        {0, 255, 255};     // 青色。
+
+PixelColor black =       {0, 0, 0};         // 黑色
+PixelColor white =       {255, 255, 255};   // 白色
+PixelColor red =         {255, 0, 0};       // 红色
+PixelColor green =       {0, 255, 0};       // 绿色
+PixelColor blue =        {0, 0, 255};       // 蓝色
+PixelColor yellow =      {255, 255, 0};     // 黄色
+PixelColor cyan =        {0, 255, 255};     // 青色
 PixelColor magenta =     {255, 0, 255};     // 品红
 PixelColor orange =      {255, 165, 0};     // 橙色
 PixelColor pink =        {255, 192, 203};   // 粉色

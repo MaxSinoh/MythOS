@@ -19,6 +19,7 @@
 
 #include <type.h>
 
+
 typedef struct GDT_entry_t 
 {
 	uint16_t limit_low;

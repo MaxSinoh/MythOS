@@ -60,42 +60,44 @@
 
 #define PT_LOAD 1
 
+// ELF程序头结构体
 typedef struct
 {
-    UINT32 p_type;        /* Segment type */
-    UINT32 p_flags;       /* Segment flags */
-    UINT64 p_offset;      /* Segment file offset */
-    UINT64 p_vaddr;       /* Segment virtual address */
-    UINT64 p_paddr;       /* Segment physical address */
-    UINT64 p_filesz;      /* Segment size in file */
-    UINT64 p_memsz;       /* Segment size in memory */
-    UINT64 p_align;       /* Segment alignment */
+    UINT32 p_type;        // 段类型
+    UINT32 p_flags;       // 段标志
+    UINT64 p_offset;      // 文件偏移
+    UINT64 p_vaddr;       // 虚拟地址
+    UINT64 p_paddr;       // 物理地址
+    UINT64 p_filesz;      // 文件大小
+    UINT64 p_memsz;       // 内存大小
+    UINT64 p_align;       // 对齐要求
 } Elf64_Phdr;
-
+// ELF文件头结构体
 typedef struct
 {
-    UINT8  e_ident[16];   /* Magic number and other info */
-    UINT16 e_type;        /* Object file type */
-    UINT16 e_machine;     /* Architecture */
-    UINT32 e_version;     /* Object file version */
-    UINT64 e_entry;       /* Entry point virtual address */
-    UINT64 e_phoff;       /* Program header table file offset */
-    UINT64 e_shoff;       /* Section header table file offset */
-    UINT32 e_flags;       /* Processor-specific flags */
-    UINT16 e_ehsize;      /* ELF header size in bytes */
-    UINT16 e_phentsize;   /* Program header table entry size */
-    UINT16 e_phnum;       /* Program header table entry count */
-    UINT16 e_shentsize;   /* Section header table entry size */
-    UINT16 e_shnum;       /* Section header table entry count */
-    UINT16 e_shstrndx;    /* Section header string table index */
+    UINT8  e_ident[16];   // ELF标识
+    UINT16 e_type;        // ELF类型
+    UINT16 e_machine;     // 目标架构
+    UINT32 e_version;     // ELF版本
+    UINT64 e_entry;       // 程序入口点
+    UINT64 e_phoff;       // 程序头表偏移
+    UINT64 e_shoff;       // 节头表偏移
+    UINT32 e_flags;       // 处理器特定标志
+    UINT16 e_ehsize;      // ELF头部大小
+    UINT16 e_phentsize;   // 程序头表项大小
+    UINT16 e_phnum;       // 程序头表项数
+    UINT16 e_shentsize;   // 节头表项大小
+    UINT16 e_shnum;       // 节头表项数
+    UINT16 e_shstrndx;    // 节头字符串表索引
 } Elf64_Ehdr;
-
-struct EFI_INPUT_KEY {
+// 输入键结构体
+struct EFI_INPUT_KEY
+{
     UINT16 ScanCode;
     CHAR16 UnicodeChar;
 };
-
-struct EFI_GUID {
+struct EFI_GUID
+{
     UINT32 Data1;
     UINT16 Data2;
     UINT16 Data3;
@@ -109,14 +111,15 @@ struct EFI_GUID {
 #define EFI_OPEN_PROTOCOL_BY_DRIVER           0x00000010
 #define EFI_OPEN_PROTOCOL_EXCLUSIVE           0x00000020
 
-enum EFI_ALLOCATE_TYPE {
+// 分配类型枚举
+enum EFI_ALLOCATE_TYPE
+{
     AllocateAnyPages,
     AllocateMaxAddress,
     AllocateAddress,
     MaxAllocateType
 };
-
-// UEFI memory type
+// 内存类型枚举
 enum EFI_MEMORY_TYPE 
 {
     EfiReservedMemoryType,
@@ -136,8 +139,7 @@ enum EFI_MEMORY_TYPE
     EfiPersistentMemory,
     EfiMaxMemoryType
 };
-
-// memory map struct
+// 内存映射结构体
 typedef struct __packed
 {
     UINTN MapSize;
@@ -146,15 +148,14 @@ typedef struct __packed
     UINTN DescriptorSize;
     UINT32 DescriptorVersion;
 } MEMORY_MAP;
-
+// 操作系统内存描述符结构体
 typedef struct 
 {
 	UINT32 Type;
 	UINT64 PhysicalStart;
 	UINT64 PageSize;
 } OS_MEMORY_DESCRIPTOR;
-
-// UEFI memory struct
+// 内存描述符结构体
 typedef struct 
 {
   UINT32 Type;
@@ -163,77 +164,75 @@ typedef struct
   UINT64 NumberOfPages;
   UINT64 Attribute;
 }  __attribute__((__aligned__(16))) EFI_MEMORY_DESCRIPTOR;
-
-// boot config struct
+// 引导配置结构体
 typedef struct
 {
     MEMORY_MAP MemoryMap;
 } BOOT_CONFIG;
 
-struct EFI_BOOT_SERVICES {
+struct EFI_BOOT_SERVICES
+{
     char _buf1[24];
-
-    // Task Priority Services
+    // 任务和事件服务
     UINTN _buf2[2];
-
-    // Memory Services
-    EFI_STATUS (*AllocatePages)(
+    // 内存服务
+    EFI_STATUS (*AllocatePages)
+    (
         enum EFI_ALLOCATE_TYPE  Type,
         enum EFI_MEMORY_TYPE    MemoryType,
         UINTN                   Pages,
         EFI_PHYSICAL_ADDRESS    *Memory
     );
-    EFI_STATUS (*FreePages)(
+    EFI_STATUS (*FreePages)
+    (
         EFI_PHYSICAL_ADDRESS    Memory,
         UINTN                   Pages
     );
-    EFI_STATUS (*GetMemoryMap) (
+    EFI_STATUS (*GetMemoryMap)
+    (
         UINTN                           *MemoryMapSize,
         EFI_MEMORY_DESCRIPTOR           *MemoryMap,
         UINTN                           *MapKey,
         UINTN                           *DescriptorSize,
         UINT32                          *DescriptorVersion
     );
-    EFI_STATUS (*AllocatePool)(
+    EFI_STATUS (*AllocatePool)
+    (
             enum EFI_MEMORY_TYPE    PoolType,
             UINTN                   Size,
             VOID                    **Buffer
     );
     EFI_STATUS (*FreePool)(VOID *Buffer);
-
-    // Event & Timer Services
+    // 事件和定时器服务
     UINTN _buf4[2];
-    EFI_STATUS (*WaitForEvent)(
+    EFI_STATUS (*WaitForEvent)
+    (
         UINTN       NumberOfEvents,
         EFI_EVENT   *Event,
         UINTN       *Index
     );
     UINTN _buf4_2[3];
-
-    // Protocol Handler Services
     UINTN _buf5[9];
-
-    // Image Services
     UINTN _buf6[4];
-
-    EFI_STATUS (*ExitBootServices)(
+    // 退出引导服务
+    EFI_STATUS (*ExitBootServices)
+    (
         EFI_HANDLE  ImageHandle,
         UINTN       MapKey
     );
-
-    // Miscellaneous Services
     UINTN _buf7[2];
-    EFI_STATUS (*SetWatchdogTimer)(
+    // 看门狗定时器服务
+    EFI_STATUS (*SetWatchdogTimer)
+    (
         UINTN   Timeout,
         UINT64  WatchdogCode,
         UINTN   DataSize,
-        CHAR16  *WatchdogData);
-
-    // DriverSupport Services
+        CHAR16  *WatchdogData
+    );
     UINTN _buf8[2];
-
-    // Open and Close Protocol Services
-    EFI_STATUS (*OpenProtocol)(
+    // 协议服务
+    EFI_STATUS (*OpenProtocol)
+    (
         EFI_HANDLE          Handle,
         struct EFI_GUID     *Protocol,
         VOID                **Interface,
@@ -242,24 +241,20 @@ struct EFI_BOOT_SERVICES {
         UINT32              Attributes
     );
     UINTN _buf9[2];
-
-    // Library Services
     UINTN _buf10[2];
-    EFI_STATUS (*LocateProtocol)(
+    // 协议服务
+    EFI_STATUS (*LocateProtocol)
+    (
         struct EFI_GUID *Protocol,
         VOID            *Registration,
         VOID            **Interface
     );
     UINTN _buf10_2[2];
-
-    // 32-bit CRC Services
     UINTN _buf11;
-
-    // Miscellaneous Services
     UINTN _buf12[3];
 };
 
-// EFI 时间结构体
+// 时间结构体
 struct EFI_TIME
 {
     UINT16 Year;       // 年 (1900-9999)
@@ -274,98 +269,112 @@ struct EFI_TIME
     UINT8  Daylight;   // 夏令时标志
     UINT8  Pad2;
 };
-
-// EFI 时间属性结构体
+// 时间属性结构体
 struct EFI_TIME_CAPABILITIES
 {
     UINT32 Resolution;      // 时钟分辨率 (秒的分数)
     UINT32 Accuracy;        // 时钟精度 (±百万分之一秒)
-    UINT8 SetsToZero;     // 时钟是否可设置为0
+    UINT8 SetsToZero;       // 时钟是否可设置为0
 };
-
-typedef enum {
+typedef enum
+{
     EfiResetCold,               // 冷重启
     EfiResetWarm,               // 热重启
     EfiResetShutdown,           // 关机
     EfiResetPlatformSpecific    // 平台特定重置
 } EFI_RESET_TYPE;
-
-// EFI 运行时服务结构体
-typedef struct {
-    UINT64                  Hdr;                    // 表头部
-    EFI_STATUS (*EFI_GET_TIME) (
+// 运行时服务结构体
+typedef struct
+{
+    UINT64                  Hdr;       // 表头部
+    EFI_STATUS (*EFI_GET_TIME)
+    (
         struct EFI_TIME                *Time,
         struct EFI_TIME_CAPABILITIES   *Capabilities
     );
-    EFI_STATUS (*EFI_SET_TIME) (
+    EFI_STATUS (*EFI_SET_TIME)
+    (
         struct EFI_TIME                *Time
     );
-    EFI_STATUS (*EFI_GET_WAKEUP_TIME) (
+    EFI_STATUS (*EFI_GET_WAKEUP_TIME)
+    (
         UINT8                 *Enabled,
         UINT8                 *Pending,
         struct EFI_TIME         *Time
     );
-    EFI_STATUS (*EFI_SET_WAKEUP_TIME) (
+    EFI_STATUS (*EFI_SET_WAKEUP_TIME)
+    (
         UINT8                 Enable,
         struct EFI_TIME         *Time
     );
-    EFI_STATUS (*EFI_SET_VARIABLE) (
+    EFI_STATUS (*EFI_SET_VARIABLE)
+    (
         CHAR16                  *VariableName,
         struct EFI_GUID         *VendorGuid,
         UINT32                  Attributes,
         UINTN                   DataSize,
         VOID                    *Data
     );
-    EFI_STATUS (*EFI_GET_VARIABLE) (
+    EFI_STATUS (*EFI_GET_VARIABLE)
+    (
         CHAR16                  *VariableName,
         struct EFI_GUID         *VendorGuid,
         UINT32                  *Attributes,
         UINTN                   *DataSize,
         VOID                    *Data
     );
-    EFI_STATUS (*EFI_GET_NEXT_VARIABLE_NAME) (
+    EFI_STATUS (*EFI_GET_NEXT_VARIABLE_NAME)
+    (
         UINTN                   *VariableNameSize,
         CHAR16                  *VariableName,
         struct EFI_GUID         *VendorGuid
     );
-    EFI_STATUS (*EFI_QUERY_VARIABLE_INFO) (
+    EFI_STATUS (*EFI_QUERY_VARIABLE_INFO)
+    (
         UINT32                  Attributes,
         UINT64                  *MaximumVariableStorageSize,
         UINT64                  *RemainingVariableStorageSize,
         UINT64                  *MaximumVariableSize
     );
-    EFI_STATUS (*EFI_CONVERT_POINTER) (
+    EFI_STATUS (*EFI_CONVERT_POINTER)
+    (
         UINTN                   DebugImage,
         VOID                    **Address
     );
-    EFI_STATUS (*EFI_RESET_SYSTEM) (
+    EFI_STATUS (*EFI_RESET_SYSTEM)
+    (
         EFI_RESET_TYPE          ResetType,
         EFI_STATUS              ResetStatus,
         UINTN                   DataSize,
         VOID                    *ResetData
     );
 } EFI_RUNTIME_SERVICES;
-
-
-struct EFI_SYSTEM_TABLE {
+// 系统表结构体
+struct EFI_SYSTEM_TABLE
+{
     char _buf1[44];
-    struct EFI_SIMPLE_TEXT_INPUT_PROTOCOL {
+    struct EFI_SIMPLE_TEXT_INPUT_PROTOCOL
+    {
         UINTN       Reset;
-        EFI_STATUS (*ReadKeyStroke)(
+        EFI_STATUS (*ReadKeyStroke)
+        (
             struct EFI_SIMPLE_TEXT_INPUT_PROTOCOL   *This,
             struct EFI_INPUT_KEY                    *Key
         );
         EFI_EVENT   WaitForKey;
     } *ConIn;
     UINTN _buf2;
-    struct EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL {
+    struct EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL
+    {
         UINTN _buf;
-        EFI_STATUS (*OutputString)(
+        EFI_STATUS (*OutputString)
+        (
             struct EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL  *This,
             CHAR16                                  *String
         );
         UINTN _buf2[4];
-        EFI_STATUS (*ClearScreen)(
+        EFI_STATUS (*ClearScreen)
+        (
             struct EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL *This
         );
     } *ConOut;
@@ -373,7 +382,7 @@ struct EFI_SYSTEM_TABLE {
     EFI_RUNTIME_SERVICES *RuntimeServices;
     struct EFI_BOOT_SERVICES *BootServices;
 };
-
+// 简单指针状态结构体
 struct EFI_SIMPLE_POINTER_STATE
 {
     int     RelativeMovementX;
@@ -382,41 +391,48 @@ struct EFI_SIMPLE_POINTER_STATE
     char    LeftButton;
     char    RightButton;
 };
-
+// 简单指针协议结构体
 struct EFI_SIMPLE_POINTER_PROTOCOL 
 {
-    EFI_STATUS (*Reset)(
+    EFI_STATUS (*Reset)
+    (
         struct EFI_SIMPLE_POINTER_PROTOCOL  *This,
         unsigned char                       ExtendedVerification
     );
-    EFI_STATUS (*GetState)(
+    EFI_STATUS (*GetState)
+    (
         struct EFI_SIMPLE_POINTER_PROTOCOL  *This,
         struct EFI_SIMPLE_POINTER_STATE     *State
     );
     void *WaitForInput;
 };
-
-struct EFI_GRAPHICS_OUTPUT_BLT_PIXEL {
+// 图形输出协议结构体
+struct EFI_GRAPHICS_OUTPUT_BLT_PIXEL
+{
     UINT8 Blue;
     UINT8 Green;
     UINT8 Red;
     UINT8 Reserved;
 };
-
-enum EFI_GRAPHICS_PIXEL_FORMAT {
+//
+enum EFI_GRAPHICS_PIXEL_FORMAT
+{
     PixelRedGreenBlueReserved8BitPerColor,
     PixelBlueGreenRedReserved8BitPerColor,
     PixelBitMask,
     PixelBltOnly,
     PixelFormatMax
 };
-
-struct EFI_GRAPHICS_OUTPUT_PROTOCOL {
+// 图形输出协议结构体
+struct EFI_GRAPHICS_OUTPUT_PROTOCOL
+{
     UINTN _buf[3];
-    struct EFI_GRAPHICS_OUTPUT_PROTOCOL_MODE {
+    struct EFI_GRAPHICS_OUTPUT_PROTOCOL_MODE
+    {
         UINT32                  MaxMode;
         UINT32                  Mode;
-        struct EFI_GRAPHICS_OUTPUT_MODE_INFORMATION {
+        struct EFI_GRAPHICS_OUTPUT_MODE_INFORMATION
+        {
             UINT32                          Version;
             UINT32                          HorizontalResolution;
             UINT32                          VerticalResolution;
@@ -429,8 +445,9 @@ struct EFI_GRAPHICS_OUTPUT_PROTOCOL {
         UINTN                   FrameBufferSize;
     } *Mode;
 };
-
-struct EFI_LOADED_IMAGE_PROTOCOL {
+// 加载镜像协议结构体
+struct EFI_LOADED_IMAGE_PROTOCOL
+{
     UINT32                      Revision;
     EFI_HANDLE                  ParentHandle;
     struct EFI_SYSTEM_TABLE     *SystemTable;
@@ -444,9 +461,10 @@ struct EFI_LOADED_IMAGE_PROTOCOL {
     enum EFI_MEMORY_TYPE        ImageCodeType;
     enum EFI_MEMORY_TYPE        ImageDataType; 
     EFI_STATUS (*Unload)(EFI_HANDLE ImageHandle);
-}; // LIP
-
-struct EFI_FILE_INFO {
+};
+// 文件信息结构体
+struct EFI_FILE_INFO
+{
     unsigned char   _buf[80];
     CHAR16          FileName[]; 
 };
@@ -455,35 +473,44 @@ struct EFI_FILE_INFO {
 #define EFI_FILE_MODE_WRITE     0x0000000000000002
 #define EFI_FILE_MODE_CREATE    0x8000000000000000
 
-struct EFI_FILE_PROTOCOL {
+struct EFI_FILE_PROTOCOL
+{
     UINTN Revision;
-    EFI_STATUS (*Open)(struct EFI_FILE_PROTOCOL *This,
-                   struct EFI_FILE_PROTOCOL **NewHandle,
-                   CHAR16                   *FileName,
-                   UINT64                   OpenMode,
-                   UINT64                   Attributes
+    EFI_STATUS (*Open)
+    (
+        struct EFI_FILE_PROTOCOL *This,
+        struct EFI_FILE_PROTOCOL **NewHandle,
+        CHAR16                   *FileName,
+        UINT64                   OpenMode,
+        UINT64                   Attributes
     );
     EFI_STATUS (*Close)(struct EFI_FILE_PROTOCOL *This);
     UINTN _buf2;
-    EFI_STATUS (*Read)(struct EFI_FILE_PROTOCOL *This,
-                   UINTN    *BufferSize,
-                   VOID     *Buffer
+    EFI_STATUS (*Read)
+    (
+        struct EFI_FILE_PROTOCOL *This,
+        UINTN    *BufferSize,
+        VOID     *Buffer
     );
-    EFI_STATUS (*Write)(struct EFI_FILE_PROTOCOL *This,
-                    UINTN   *BufferSize,
-                    VOID    *Buffer
+    EFI_STATUS (*Write)
+    (
+        struct EFI_FILE_PROTOCOL *This,
+        UINTN   *BufferSize,
+        VOID    *Buffer
     );
     UINTN _buf3[4];
     EFI_STATUS (*Flush)(struct EFI_FILE_PROTOCOL *This);
-}; // EFI_FILE_PROTOCOL
-
-struct EFI_SIMPLE_FILE_SYSTEM_PROTOCOL {
+};
+// 简单文件系统协议结构体
+struct EFI_SIMPLE_FILE_SYSTEM_PROTOCOL
+{
     UINT64 Revision;
-    EFI_STATUS (*OpenVolume)(
+    EFI_STATUS (*OpenVolume)
+    (
         struct EFI_SIMPLE_FILE_SYSTEM_PROTOCOL  *This,
         struct EFI_FILE_PROTOCOL                **Root
     );
-}; // SFSP
+};
 
 extern struct EFI_SYSTEM_TABLE                  *ST;
 extern struct EFI_GRAPHICS_OUTPUT_PROTOCOL      *GOP;

@@ -19,6 +19,7 @@
 
 #include <gui/graphic/graphics.h>
 
+
 extern PixelColor black;        // 黑色
 extern PixelColor white;        // 白色
 extern PixelColor red;          // 红色

@@ -17,6 +17,7 @@
 #ifndef _PRINTK_H_
 #define _PRINTK_H_
 
+// 输出格式化字符串
 int printk(const char *fmt, ...);
 
 #endif
